@@ -1,4 +1,4 @@
-/* Vibe Coding CSS: עיצוב נקי וסופי - גודל עוקב ו-Full Screen מתוקן */
+/* Vibe Coding CSS: עיצוב נקי וסופי - תיקון מעבר Scary Smooth */
 body {
     background-color: #f4f7f6;
     font-family: 'Montserrat', sans-serif; 
@@ -79,8 +79,10 @@ h1 {
     cursor: pointer;
     border-radius: 50%; 
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
-    /* נוסף: מעבר חלק ל-Fullscreen */
+    
+    /* קריטי: מעבר חלק על כל המאפיינים למשך 0.5 שניות */
     transition: all 0.5s ease-in-out; 
+    
     background-color: #fff; 
     display: flex;
     align-items: center;
@@ -94,29 +96,22 @@ h1 {
 /* מצב FULL SCREEN אימה - תיקון נקודת מרכז */
 .project-card.fullscreen-video {
     position: fixed !important; 
-    /* מעביר את הפינה השמאלית העליונה למרכז המסך (לפני הגדילה) */
+    
+    /* ממרכז את העיגול במרכז המסך (50%/50%) */
     top: 50% !important;
     left: 50% !important; 
-    /* משיב את העיגול למרכז המסך */
     transform: translate(-50%, -50%) !important; 
     
+    /* קריטי: המעבר עצמו */
     width: 100vw !important; 
     height: 100vh !important; 
+    
+    /* מוריד את הרדיוס לאפס (הופך לעיגול למרובע) */
     border-radius: 0 !important; 
+    
     z-index: 1000 !important;
     overflow: hidden !important;
-    
-    /* מוודא שהמעבר יהיה חלק */
-    transition: all 0.5s ease-in-out !important; 
-    background-color: transparent !important; /* רקע שקוף */
-}
-
-/* תיקון קריטי למניעת מריחה: הוידאו צריך למלא את המסך */
-.project-card.fullscreen-video .project-video {
-    width: 100% !important; 
-    height: 100% !important;
-    border-radius: 0 !important; 
-    object-fit: cover !important; 
+    background-color: transparent !important; 
 }
 
 /* אלמנט הוידאו / תמונת הפוסטר */
@@ -131,6 +126,14 @@ h1 {
     transition: opacity 0.4s ease; 
     border-radius: 50%; 
     filter: grayscale(100%); 
+}
+
+/* תיקון קריטי למניעת מריחה: הוידאו צריך למלא את המסך */
+.project-card.fullscreen-video .project-video {
+    width: 100% !important; 
+    height: 100% !important;
+    border-radius: 0 !important; 
+    object-fit: cover !important; 
 }
 
 /* שכבת הכיתוב - ממוקמת בתחתית ומכילה את ה-SVG */
