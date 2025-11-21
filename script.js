@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
     const fishContainer = document.getElementById('fishContainer'); 
-    const fishCounterDisplay = document.getElementById('fishCounterDisplay'); // אלמנט המונה
+    const fishCounterDisplay = document.getElementById('fishCounterDisplay'); // <-- המונה בתוך העיגול
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearvideo.mp4'; 
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentVideoPlaying = false; 
     
     let fishElements = []; 
-    let fishCounterValue = FISH_COUNT; // <-- ערך המונה
+    let fishCounterValue = FISH_COUNT; 
     let currentFollowerScale = 1.0; 
     
     // מנגנון הגנה
@@ -43,9 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // פונקציה לעדכון המונה
     function updateCounterDisplay() {
         if (currentMode === 'cute') {
-            fishCounterDisplay.textContent = `Objects remaining: ${fishCounterValue}`;
+            fishCounterDisplay.textContent = `${fishCounterValue}`;
+            fishCounterDisplay.classList.add('active'); // מציג את המונה
         } else {
-            fishCounterDisplay.textContent = ''; // מנקה את המונה במצבים אחרים
+            fishCounterDisplay.classList.remove('active'); // מסתיר את המונה
         }
     }
 
@@ -72,13 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
         scaryEndScreen.classList.remove('active'); 
         scaryEndScreen.style.backgroundImage = 'none'; 
         
-        // איפוס הדב העוקב והמונה
+        // איפוס הדב העוקב
         followerImage.classList.remove('active'); 
         currentFollowerScale = 1.0; 
         followerImage.style.transform = `translate(-50%, -50%) scale(1.0)`; 
         
         clearFishGame(); // קריטי: ניקוי הדגים
-        fishCounterValue = FISH_COUNT; // <-- איפוס המונה
+        fishCounterValue = FISH_COUNT; // איפוס המונה
         
         // עדכון כפתורי הסקאלה
         document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
@@ -100,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
         if (mainVideo) mainVideo.load(); // טוען את המקור החדש
-        updateCounterDisplay(); // <-- עדכון המונה
+        updateCounterDisplay(); // מציג/מנקה את המונה
     }
 
     // 3. לוגיקת סיום למצב מפחיד (פריים אחרון וכפתור)
@@ -122,18 +123,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // 4. פונקציית התחלת אינטראקציה (Hover/Click) - התיקון העיקרי ל-CUTE
+    // 4. פונקציית התחלת אינטראקציה (Hover/Click)
     function startVideoAndTimer() {
         if (mainVideo && !followerImage.classList.contains('active')) {
-            // FIX: הופך את הניגון במצב regular לאמין יותר
-            if (currentMode === 'regular' && mainVideo.paused) {
+            
+            // FIX REGULAR MODE: נפעיל תמיד אם הוא לא מנגן כבר
+            if (currentMode === 'regular' && !currentVideoPlaying) { 
                  mainVideo.play();
                  currentVideoPlaying = true;
-            } else if (currentMode !== 'regular') {
+                 return;
+            } else if (currentMode === 'regular') {
+                return; // אם רגיל וכבר מנגן
+            }
+            
+            // לוגיקת מצבים מפחיד/חמוד
+            if (currentMode !== 'regular') {
                 mainVideo.play();
                 currentVideoPlaying = true;
-            } else {
-                return; // אם זה רגיל וכבר מנגן
             }
             
             // לוגיקת טיימרים
@@ -154,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-    
+
     // 5. לוגיקת עקיבת עכבר (MouseMove)
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
@@ -199,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < FISH_COUNT; i++) {
             createFish();
         }
-        updateCounterDisplay(); // מציג את 10 הדגים בהתחלה
+        updateCounterDisplay(); 
     }
 
     function clearFishGame() {
