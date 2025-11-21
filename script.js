@@ -9,32 +9,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const followerImage = document.getElementById('followerImage');
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
-    const fishContainer = document.getElementById('fishContainer'); 
 
     // הגדרת קבצי הוידאו
-    const REGULAR_VIDEO_SRC = 'bearvideo.mp4';
+    const REGULAR_VIDEO_SRC = 'bearregular.webm'; // <-- עודכן ל-webm
     const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
-    const FISH_IMAGE_SRC = 'fish.png'; // קובץ הדג
-
-    const FULLSCREEN_DELAY_MS = 1500; 
+    
+    const FULLSCREEN_DELAY_MS = 1500; // קיצרנו מעבר חלק יותר
     const SCARY_END_HOLD_MS = 3000; 
     const CUTE_VIDEO_DURATION_MS = 5000; 
-    const FISH_COUNT = 10; // מספר הדגים
-    const FOLLOWER_GROW_FACTOR = 0.1; // <-- גדילה של 10% במגע
-    
+
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
     let scaryEndTimeout = null; 
     let currentMode = 'regular'; 
     let currentVideoPlaying = false; 
     
-    let fishElements = []; 
-    let touchedFishCount = 0; 
-    let currentFollowerScale = 1.0; // <-- חדש: סקאלת הדב הנוכחית
-    
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
@@ -42,13 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // פונקציה שמבטיחה שהוידאו מוכן לניגון (Regular Mode Fix)
     mainVideo.onloadeddata = () => {
         if (currentMode === 'regular') {
-            mainVideo.style.opacity = 1; 
+            mainVideo.style.opacity = 1; // מוודא שהתמונה הלבנה מופיעה (אם יש פוסטר)
         }
     };
 
     // 2. פונקציית מעבר מצבים (איפוס וטעינה מחדש)
     function switchMode(mode) {
-        // ניקוי טיימרים
         clearTimeout(fullscreenTimeout);
         clearTimeout(cuteVideoTimeout);
         clearTimeout(scaryEndTimeout);
@@ -66,16 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mainCard.classList.remove('fullscreen-video');
         body.classList.remove('scary-mode');
         body.classList.remove('hide-cursor');
+        followerImage.classList.remove('active'); 
         scaryEndScreen.classList.remove('active'); 
         scaryEndScreen.style.backgroundImage = 'none'; 
         
-        // איפוס הדב העוקב
-        followerImage.classList.remove('active'); 
-        currentFollowerScale = 1.0; // <-- איפוס סקאלת הדב
-        followerImage.style.transform = `translate(-50%, -50%) scale(1.0)`; // <-- איפוס חזותי
-        
-        clearFishGame(); // קריטי: ניקוי הדגים
-
         // עדכון כפתורי הסקאלה
         document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
         
@@ -89,106 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'cute':
                 cuteModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = CUTE_MAGIC_VIDEO_SRC;
-                
-                cuteVideoTimeout = setTimeout(() => {
-                    mainVideo.pause(); 
-                    mainVideo.style.opacity = 0; 
-                    mainCard.style.pointerEvents = 'none'; 
-                    followerImage.classList.add('active'); 
-                    body.classList.add('hide-cursor'); 
-                    initFishGame(); // קריטי: מתחיל את משחק הדגים
-                }, CUTE_VIDEO_DURATION_MS);
                 break;
             default: // 'regular'
                 regularModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = REGULAR_VIDEO_SRC;
                 break;
         }
-        if (mainVideo) mainVideo.load(); // טוען את המקור החדש
+        if (mainVideo) mainVideo.load(); 
     }
 
-    // 3. פונקציות ניהול דגים
-    function createFish() {
-        const fish = document.createElement('img');
-        fish.src = FISH_IMAGE_SRC;
-        fish.classList.add('fish');
-        fish.dataset.originalScale = 1; 
-        
-        // מיקום אקראי על המסך
-        const minMargin = 80;
-        const x = Math.random() * (window.innerWidth - 2 * minMargin) + minMargin; 
-        const y = Math.random() * (window.innerHeight - 2 * minMargin) + minMargin; 
-        
-        fish.style.left = `${x}px`;
-        fish.style.top = `${y}px`;
-
-        // זווית אקראית
-        const rotation = Math.random() * 360; 
-        fish.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-        
-        fishContainer.appendChild(fish);
-        fishElements.push(fish);
-    }
-
-    function initFishGame() {
-        clearFishGame(); 
-        for (let i = 0; i < FISH_COUNT; i++) {
-            createFish();
-        }
-    }
-
-    function clearFishGame() {
-        fishElements.forEach(fish => fish.remove());
-        fishElements = [];
-        touchedFishCount = 0;
-    }
-
-    function checkFishCollision() {
-        if (!followerImage.classList.contains('active')) return; 
-
-        // קבלת מיקום וגודל הדב (העוקב)
-        const followerRect = followerImage.getBoundingClientRect();
-
-        for (let i = fishElements.length - 1; i >= 0; i--) {
-            const fish = fishElements[i];
-            const fishRect = fish.getBoundingClientRect();
-
-            // בדיקת התנגשות בין שני מלבנים
-            const collision = !(
-                followerRect.right < fishRect.left ||
-                followerRect.left > fishRect.right ||
-                followerRect.bottom < fishRect.top ||
-                followerRect.top > fishRect.bottom
-            );
-
-            if (collision) {
-                touchedFishCount++;
-
-                // 1. הגדלה קריטית של הדב העוקב
-                currentFollowerScale += FOLLOWER_GROW_FACTOR;
-                followerImage.style.transform = `translate(-50%, -50%) scale(${currentFollowerScale})`;
-                
-                // 2. העלמת הדג והסרתו מהמערך
-                fish.remove(); 
-                fishElements.splice(i, 1); 
-
-                // 3. בדיקה אם כל הדגים נגעו
-                if (touchedFishCount === FISH_COUNT) {
-                    setTimeout(() => {
-                        alert("You've collected all the objects! Resetting mode.");
-                        switchMode('regular'); // איפוס למצב רגיל
-                    }, 500); 
-                    return; 
-                }
-            }
-        }
-    }
-
-    // 4. לוגיקת סיום למצב מפחיד (פריים אחרון וכפתור)
+    // 3. לוגיקת סיום למצב מפחיד (פריים אחרון וכפתור)
     mainVideo.onended = () => {
         if (currentMode === 'scary') {
             mainVideo.pause(); 
             
+            // לקיחת הפריים האחרון
             const canvas = document.createElement('canvas');
             canvas.width = mainVideo.videoWidth;
             canvas.height = mainVideo.videoHeight;
@@ -203,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // 5. פונקציית התחלת אינטראקציה (Hover/Click)
+    // 4. פונקציית התחלת אינטראקציה (Hover/Click)
     function startVideoAndTimer() {
         if (mainVideo && mainVideo.paused && !followerImage.classList.contains('active')) {
             mainVideo.play();
@@ -215,14 +115,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     body.classList.add('scary-mode');
                 }, FULLSCREEN_DELAY_MS); 
             } else if (currentMode === 'cute') {
-                // במצב חמוד, הוידאו ינגן, ואז יופעל משחק הדגים
+                cuteVideoTimeout = setTimeout(() => {
+                    mainVideo.pause(); 
+                    mainVideo.style.opacity = 0; 
+                    mainCard.style.pointerEvents = 'none'; 
+                    followerImage.classList.add('active'); 
+                    body.classList.add('hide-cursor'); 
+                }, CUTE_VIDEO_DURATION_MS);
             }
         }
     }
+    
+    // 5. לוגיקת עקיבת עכבר (MouseMove) - תיקון למיקום מרכזי
+    document.addEventListener('mousemove', (event) => {
+        if (followerImage.classList.contains('active')) {
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            // ה-CSS מטפל בקיזוז למרכז (-50%) - כאן אנו רק מעבירים אותו ל-XY העכבר
+            followerImage.style.left = `${mouseX}px`; 
+            followerImage.style.top = `${mouseY}px`;
+        }
+    });
 
     // 6. אירועי בקרת משתמש
     mainCard.addEventListener('mouseenter', startVideoAndTimer);
-    
     mainCard.addEventListener('mouseleave', () => {
         if (currentMode === 'regular' && currentVideoPlaying) {
             mainVideo.pause();
