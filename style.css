@@ -1,4 +1,4 @@
-/* Vibe Coding CSS: עיצוב נקי וסופי (טקסט קשתי ו-Full Screen) */
+/* Vibe Coding CSS: עיצוב נקי וסופי - גודל עוקב ו-Full Screen מתוקן */
 body {
     background-color: #f4f7f6;
     font-family: 'Montserrat', sans-serif; 
@@ -14,11 +14,11 @@ body {
 }
 
 body.scary-mode {
-    overflow: hidden; /* מונע גלילה במצב Fullscreen */
+    overflow: hidden; 
 }
 
 body.hide-cursor {
-    cursor: none; /* מסתיר את סמן העכבר הרגיל במצב מעקב תמונה */
+    cursor: none;
 }
 
 header {
@@ -101,7 +101,15 @@ h1 {
     z-index: 1000 !important;
     transition: all 0.5s ease-in-out !important; 
     overflow: hidden !important;
-    transform: none !important; /* מבטל את אפקט הקפיצה */
+    transform: none !important; 
+}
+
+/* תיקון קריטי למניעת מריחה: הוידאו צריך למלא את המסך */
+.project-card.fullscreen-video .project-video {
+    width: 100% !important; 
+    height: 100% !important;
+    border-radius: 0 !important; 
+    object-fit: cover !important; /* מוודא שלא נמרח */
 }
 
 /* אלמנט הוידאו / תמונת הפוסטר */
@@ -133,7 +141,7 @@ h1 {
 /* הגדרות ה-SVG עבור הטקסט הקשתי */
 .curve-text-svg {
     position: absolute;
-    bottom: -20px; /* מיקום משיק לקשת התחתונה */
+    bottom: -10px; 
     width: 100%;
     height: 100%;
     overflow: visible; 
@@ -141,7 +149,7 @@ h1 {
 
 .curved-text {
     fill: black; 
-    font-size: 1.0em; /* גודל סופי ללא חיתוך */
+    font-size: 1.0em;
     font-weight: 700;
     letter-spacing: 1px;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
@@ -166,14 +174,43 @@ h1 {
 /* תמונה עוקבת אחרי עכבר */
 .follower {
     position: fixed; 
-    pointer-events: none; /* קריטי: מאפשר לחיצה על אלמנטים שנמצאים מתחת */
-    z-index: 10000; /* הכי למעלה */
+    pointer-events: none; 
+    z-index: 10000; 
     transition: transform 0.1s ease-out; 
-    width: 60px; /* גודל התמונה העוקבת */
+    width: 240px; /* <--- הוגדל פי 4 מ-60px */
     height: auto;
-    opacity: 0; /* מוסתר כברירת מחדל */
+    opacity: 0; 
 }
 
 .follower.active {
-    opacity: 1; /* מופיע כשהוא פעיל */
+    opacity: 1; 
+}
+
+/* מסך סוף האימה (כפתור החזרה) */
+.scary-end-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1001;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.scary-end-screen.active {
+    display: flex;
+}
+
+#resetButton {
+    background-color: #f00;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: 700;
 }
