@@ -232,7 +232,7 @@ h1 {
 
 .fish {
     position: absolute;
-    width: 30px; /* <--- הוקטן מאוד מאוד מאוד! */
+    width: 45px; /* <--- תוקן: גודל הדגים הוגדל */
     height: auto;
     cursor: pointer; 
     user-select: none; 
