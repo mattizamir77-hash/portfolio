@@ -1,31 +1,161 @@
-/* מצב FULL SCREEN אימה - מופעל ע"י JavaScript */
+/* Vibe Coding CSS: עיצוב נקי וסופי (טקסט קשתי ו-Full Screen) */
 
-/* מעלים את ה-overflow כדי למנוע גלילה מיותרת כשהוידאו מתפרס */
-body.scary-mode {
-    overflow: hidden;
+body {
+    background-color: #f4f7f6;
+    font-family: 'Montserrat', sans-serif; 
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
-/* הגדרות כרטיס הפרויקט כשהוא במסך מלא */
+body.scary-mode {
+    overflow: hidden; /* מונע גלילה במצב Fullscreen */
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    background-color: #ffffff;
+    border-bottom: 2px solid #e0e0e0;
+    width: 100%; 
+    position: fixed; 
+    top: 0;
+    z-index: 20;
+}
+
+h1 {
+    color: #1a73e8;
+    margin: 0;
+}
+
+.mode-toggle {
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mode-toggle button {
+    padding: 8px 15px;
+    border: 2px solid #1a73e8;
+    background-color: transparent;
+    color: #1a73e8;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.mode-toggle button.active {
+    background-color: #1a73e8;
+    color: white;
+}
+
+.portfolio-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 50px 20px;
+    margin-top: 150px;
+}
+
+/* כרטיס הפרויקט (עיגול!) */
+.project-card {
+    position: relative;
+    overflow: hidden; 
+    width: 300px;
+    height: 300px; 
+    cursor: pointer;
+    border-radius: 50%; 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
+    transition: transform 0.3s ease;
+    background-color: #fff; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-card:hover {
+    transform: translateY(-5px); 
+}
+
+/* מצב FULL SCREEN אימה - מופעל ע"י JavaScript */
 .project-card.fullscreen-video {
-    position: fixed; /* שינוי מיקום מוחלט למיקום קבוע */
+    position: fixed !important; 
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important; 
+    height: 100vh !important; 
+    border-radius: 0 !important; 
+    z-index: 1000 !important;
+    transition: all 0.5s ease-in-out !important; 
+    overflow: hidden !important;
+    transform: none !important; /* מבטל את אפקט הקפיצה */
+}
+
+/* אלמנט הוידאו / תמונת הפוסטר */
+.project-video {
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100vw !important; /* רוחב מסך מלא */
-    height: 100vh !important; /* גובה מסך מלא */
-    border-radius: 0 !important; /* מבטל את העיגול */
-    z-index: 1000; /* מופיע מעל הכל */
-    transition: all 0.5s ease-in-out; 
-}
-
-/* הגדרות הוידאו כשהוא במסך מלא */
-.project-card.fullscreen-video .project-video {
     width: 100%;
     height: 100%;
-    filter: none; /* מבטל גווני אפור */
+    object-fit: cover; 
     opacity: 1; 
+    transition: opacity 0.4s ease; 
+    border-radius: 50%; 
+    filter: grayscale(100%); 
 }
 
-/* מעלים את הכיתוב וה-SVG במצב מסך מלא */
+/* שכבת הכיתוב - ממוקמת בתחתית ומכילה את ה-SVG */
+.project-info {
+    position: absolute;
+    bottom: 0; 
+    width: 100%;
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.0); 
+    transition: all 0.4s ease; 
+    z-index: 10; 
+    pointer-events: none; 
+}
+
+/* הגדרות ה-SVG עבור הטקסט הקשתי */
+.curve-text-svg {
+    position: absolute;
+    bottom: -20px; 
+    width: 100%;
+    height: 100%;
+    overflow: visible; 
+}
+
+.curved-text {
+    fill: black; 
+    font-size: 1.0em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    transition: all 0.4s ease;
+}
+
+/* *** אפקט ה-Hover: העלמת הטקסט וחשיפת הצבע המלא *** */
+.project-card:hover .project-video {
+    opacity: 1; 
+    filter: grayscale(0%); 
+}
+
+.project-card:hover .curved-text {
+    opacity: 0; 
+}
+
+/* העלמת הכיתוב במצב Fullscreen */
 .project-card.fullscreen-video .project-info {
-    display: none;
+    display: none !important;
 }
