@@ -88,18 +88,18 @@ h1 {
 /* הגדרות ה-SVG עבור הטקסט הקשתי */
 .curve-text-svg {
     position: absolute;
-    bottom: -30px; 
+    bottom: -20px; /* <--- התיקון: העלנו את הטקסט ל-20px- */
     width: 100%;
     height: 100%;
     overflow: visible; 
 }
 
 .curved-text {
-    fill: black; /* <-- הצבע שונה לשחור כדי לבלוט על הדוב הלבן */
-    font-size: 1.0em; /* <-- הוקטן לגודל סופי */
+    fill: black; 
+    font-size: 1.0em;
     font-weight: 700;
     letter-spacing: 1px;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); /* צל לבן קל להבלטה */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); 
     transition: all 0.4s ease;
 }
 
