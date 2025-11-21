@@ -1,5 +1,4 @@
 /* Vibe Coding CSS: עיצוב נקי וסופי (טקסט קשתי ו-Full Screen) */
-
 body {
     background-color: #f4f7f6;
     font-family: 'Montserrat', sans-serif; 
@@ -18,11 +17,9 @@ body.scary-mode {
     overflow: hidden; /* מונע גלילה במצב Fullscreen */
 }
 
-/* קלאס להסתרת העכבר הרגיל במצב מעקב תמונה */
 body.hide-cursor {
-    cursor: none;
+    cursor: none; /* מסתיר את סמן העכבר הרגיל במצב מעקב תמונה */
 }
-
 
 header {
     text-align: center;
@@ -136,7 +133,7 @@ h1 {
 /* הגדרות ה-SVG עבור הטקסט הקשתי */
 .curve-text-svg {
     position: absolute;
-    bottom: -20px; 
+    bottom: -20px; /* מיקום משיק לקשת התחתונה */
     width: 100%;
     height: 100%;
     overflow: visible; 
@@ -144,7 +141,7 @@ h1 {
 
 .curved-text {
     fill: black; 
-    font-size: 1.0em;
+    font-size: 1.0em; /* גודל סופי ללא חיתוך */
     font-weight: 700;
     letter-spacing: 1px;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
@@ -169,7 +166,7 @@ h1 {
 /* תמונה עוקבת אחרי עכבר */
 .follower {
     position: fixed; 
-    pointer-events: none; /* קריטי: מאפשר ללחוץ על אלמנטים שנמצאים מתחת */
+    pointer-events: none; /* קריטי: מאפשר לחיצה על אלמנטים שנמצאים מתחת */
     z-index: 10000; /* הכי למעלה */
     transition: transform 0.1s ease-out; 
     width: 60px; /* גודל התמונה העוקבת */
