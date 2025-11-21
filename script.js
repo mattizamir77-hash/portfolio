@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const SCARY_END_HOLD_MS = 3000; 
     const CUTE_VIDEO_DURATION_MS = 5000; 
     const FISH_COUNT = 10;
-    const FOLLOWER_GROW_FACTOR = 0.25; // <--- תוקן: גדילה של 25% במגע
+    const FOLLOWER_GROW_FACTOR = 0.25; 
     
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
@@ -121,17 +121,27 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 4. פונקציית התחלת אינטראקציה (Hover/Click)
     function startVideoAndTimer() {
-        if (mainVideo && mainVideo.paused && !followerImage.classList.contains('active')) {
-            mainVideo.play();
-            currentVideoPlaying = true; 
+        if (mainVideo && !followerImage.classList.contains('active')) { // <-- FIX: הוסר ה-mainVideo.paused
             
+            // תנאי נוסף: אם זה רגיל, הפעל רק אם מושהה
+            if (currentMode === 'regular' && mainVideo.paused) {
+                 mainVideo.play();
+                 currentVideoPlaying = true;
+            } else if (currentMode !== 'regular') {
+                // מצב מפחיד/חמוד - תמיד מנסים לנגן (כי זה מופעל רק פעם אחת)
+                mainVideo.play();
+                currentVideoPlaying = true;
+            } else {
+                return; // אם זה רגיל וכבר מנגן
+            }
+            
+            // לוגיקת טיימרים
             if (currentMode === 'scary') {
                 fullscreenTimeout = setTimeout(() => {
                     mainCard.classList.add('fullscreen-video');
                     body.classList.add('scary-mode');
                 }, FULLSCREEN_DELAY_MS); 
             } else if (currentMode === 'cute') {
-                // טיימר המשחק מתחיל לאחר ה-5 שניות של הוידאו
                 cuteVideoTimeout = setTimeout(() => {
                     mainVideo.pause(); 
                     mainVideo.style.opacity = 0; 
@@ -150,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const mouseX = event.clientX;
             const mouseY = event.clientY;
             
-            // עדכון מיקום הדב
             followerImage.style.left = `${mouseX}px`; 
             followerImage.style.top = `${mouseY}px`;
 
@@ -236,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // 6. אירועי בקרת משתמש
+    // 7. אירועי בקרת משתמש
     mainCard.addEventListener('mouseenter', startVideoAndTimer);
     
     mainCard.addEventListener('mouseleave', () => {
@@ -257,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 7. לוגיקת כפתורים
+    // 8. לוגיקת כפתורים
     regularModeButton.addEventListener('click', () => switchMode('regular'));
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
     cuteModeButton.addEventListener('click', () => switchMode('cute')); 
