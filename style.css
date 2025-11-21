@@ -18,6 +18,12 @@ body.scary-mode {
     overflow: hidden; /* מונע גלילה במצב Fullscreen */
 }
 
+/* קלאס להסתרת העכבר הרגיל במצב מעקב תמונה */
+body.hide-cursor {
+    cursor: none;
+}
+
+
 header {
     text-align: center;
     padding: 40px 20px 20px;
@@ -158,4 +164,19 @@ h1 {
 /* העלמת הכיתוב במצב Fullscreen */
 .project-card.fullscreen-video .project-info {
     display: none !important;
+}
+
+/* תמונה עוקבת אחרי עכבר */
+.follower {
+    position: fixed; 
+    pointer-events: none; /* קריטי: מאפשר ללחוץ על אלמנטים שנמצאים מתחת */
+    z-index: 10000; /* הכי למעלה */
+    transition: transform 0.1s ease-out; 
+    width: 60px; /* גודל התמונה העוקבת */
+    height: auto;
+    opacity: 0; /* מוסתר כברירת מחדל */
+}
+
+.follower.active {
+    opacity: 1; /* מופיע כשהוא פעיל */
 }
