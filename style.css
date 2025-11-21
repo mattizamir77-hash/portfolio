@@ -33,7 +33,7 @@ header {
 }
 
 h1 {
-    color: #1a73e8;
+    color: #1a73e8; /* הכחול הסטנדרטי */
     margin: 0;
 }
 
@@ -223,7 +223,7 @@ h1 {
     transform: translate(-50%, -50%);
     font-size: 5em;
     font-weight: 900;
-    color: #4CAF50; /* צבע ירוק לדוגמה */
+    color: #1a73e8; /* שינוי: צבע כחול כמו הכותרת */
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
     z-index: 10002;
     display: none; /* מוסתר כברירת מחדל */
