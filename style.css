@@ -1,4 +1,4 @@
-/* Vibe Coding CSS: עיצוב נקי וסופי - תוקן גודל הדגים */
+/* Vibe Coding CSS: עיצוב נקי וסופי - גרסה עגולה יציבה */
 body {
     background-color: #f4f7f6;
     font-family: 'Montserrat', sans-serif; 
@@ -11,14 +11,6 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-}
-
-body.scary-mode {
-    overflow: hidden; 
-}
-
-body.hide-cursor {
-    cursor: none;
 }
 
 header {
@@ -35,47 +27,6 @@ header {
 h1 {
     color: #1a73e8;
     margin: 0;
-}
-
-/* עיצוב המונה בתוך העיגול */
-.counter {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3em; /* גודל גדול */
-    font-weight: 700;
-    color: #1a73e8; /* כחול של הכותרת */
-    z-index: 15;
-    opacity: 0; /* מוסתר כברירת מחדל */
-    transition: opacity 0.3s ease;
-}
-
-.counter.active {
-    opacity: 1;
-}
-
-.mode-toggle {
-    margin: 10px auto;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.mode-toggle button {
-    padding: 8px 15px;
-    border: 2px solid #1a73e8;
-    background-color: transparent;
-    color: #1a73e8;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 600;
-}
-
-.mode-toggle button.active {
-    background-color: #1a73e8;
-    color: white;
 }
 
 .portfolio-grid {
@@ -108,20 +59,6 @@ h1 {
     transform: translateY(-5px); 
 }
 
-/* מצב FULL SCREEN אימה - תיקון נקודת מרכז */
-.project-card.fullscreen-video {
-    position: fixed !important; 
-    top: 50% !important;
-    left: 50% !important; 
-    transform: translate(-50%, -50%) !important; 
-    width: 100vw !important; 
-    height: 100vh !important; 
-    border-radius: 0 !important; 
-    z-index: 1000 !important;
-    overflow: hidden !important;
-    background-color: transparent !important; 
-}
-
 /* אלמנט הוידאו / תמונת הפוסטר */
 .project-video {
     position: absolute;
@@ -134,14 +71,6 @@ h1 {
     transition: opacity 0.4s ease; 
     border-radius: 50%; 
     filter: grayscale(100%); 
-}
-
-/* תיקון קריטי למניעת מריחה: הוידאו צריך למלא את המסך */
-.project-card.fullscreen-video .project-video {
-    width: 100% !important; 
-    height: 100% !important;
-    border-radius: 0 !important; 
-    object-fit: cover !important; 
 }
 
 /* שכבת הכיתוב - ממוקמת בתחתית ומכילה את ה-SVG */
@@ -182,96 +111,4 @@ h1 {
 
 .project-card:hover .curved-text {
     opacity: 0; 
-}
-
-/* העלמת הכיתוב במצב Fullscreen */
-.project-card.fullscreen-video .project-info {
-    display: none !important;
-}
-
-/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל */
-.follower {
-    position: fixed; 
-    pointer-events: none; 
-    z-index: 10000; 
-    transition: transform 0.1s ease-out; 
-    width: 240px; 
-    height: auto;
-    opacity: 0; 
-    transform: translate(-50%, -50%); 
-    left: 0; 
-    top: 0;
-}
-
-.follower.active {
-    opacity: 1; 
-}
-
-/* מסך סוף האימה (כפתור החזרה) */
-.scary-end-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1001;
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-.scary-end-screen.active {
-    display: flex;
-}
-
-#resetButton {
-    background-color: #f00;
-    color: white;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.2em;
-    font-weight: 700;
-}
-
-/* *** פיצ'ר הדגים *** */
-#fishContainer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none; 
-    z-index: 500; 
-}
-
-.fish {
-    position: absolute;
-    width: 135px; 
-    height: auto;
-    cursor: pointer; 
-    user-select: none; 
-    transition: transform 0.1s ease-out, opacity 0.5s ease-in-out; 
-    opacity: 0; 
-    animation: fadeInScale 0.5s forwards ease-out; 
-}
-
-.fish.hit {
-    opacity: 0.8; 
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
 }
