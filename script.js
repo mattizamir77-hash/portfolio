@@ -6,16 +6,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const scaryModeButton = document.getElementById('scaryMode');
     const cuteModeButton = document.getElementById('cuteMode');
     const body = document.body;
+    const followerImage = document.getElementById('followerImage');
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
+    const fishContainer = document.getElementById('fishContainer'); 
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearvideo.mp4'; 
     const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
-    
+    const FISH_IMAGE_SRC = 'fish.png'; 
+
     const FULLSCREEN_DELAY_MS = 1500; 
     const SCARY_END_HOLD_MS = 3000; 
+    const CUTE_VIDEO_DURATION_MS = 5000; 
+    const FISH_COUNT = 10;
+    const FOLLOWER_GROW_FACTOR = 0.25; // <--- תוקן: גדילה של 25% במגע
     
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
@@ -23,12 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMode = 'regular'; 
     let currentVideoPlaying = false; 
     
-    // מנגנון הגנה קריטי
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !scaryEndScreen || !resetButton) {
-        console.error("Initialization failed: Missing critical HTML elements.");
-        // We stop here to prevent JS errors from cascading
+    let fishElements = []; 
+    let touchedFishCount = 0; 
+    let currentFollowerScale = 1.0; 
+    
+    // מנגנון הגנה
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer) {
+        console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
+
+    // פונקציה שמבטיחה שהוידאו מוכן לניגון (Regular Mode Fix)
+    mainVideo.onloadeddata = () => {
+        if (currentMode === 'regular') {
+            mainVideo.style.opacity = 1; 
+        }
+    };
 
     // 2. פונקציית מעבר מצבים (איפוס וטעינה מחדש)
     function switchMode(mode) {
@@ -43,14 +59,23 @@ document.addEventListener('DOMContentLoaded', () => {
             mainVideo.currentTime = 0;
             mainVideo.style.opacity = 1; 
         }
+        mainCard.style.pointerEvents = 'auto'; 
         currentVideoPlaying = false; 
         
         // איפוס קלאסים ומסך סיום
         mainCard.classList.remove('fullscreen-video');
         body.classList.remove('scary-mode');
+        body.classList.remove('hide-cursor');
         scaryEndScreen.classList.remove('active'); 
         scaryEndScreen.style.backgroundImage = 'none'; 
         
+        // איפוס הדב העוקב
+        followerImage.classList.remove('active'); 
+        currentFollowerScale = 1.0; 
+        followerImage.style.transform = `translate(-50%, -50%) scale(1.0)`; 
+        
+        clearFishGame(); // קריטי: ניקוי הדגים
+
         // עדכון כפתורי הסקאלה
         document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
         
@@ -64,7 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'cute':
                 cuteModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = CUTE_MAGIC_VIDEO_SRC;
-                break;
+                
+                // המשחק יופעל כעת רק מתוך startVideoAndTimer
+                break; 
             default: // 'regular'
                 regularModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = REGULAR_VIDEO_SRC;
@@ -78,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentMode === 'scary') {
             mainVideo.pause(); 
             
-            // לקיחת הפריים האחרון לתמונת רקע
             const canvas = document.createElement('canvas');
             canvas.width = mainVideo.videoWidth;
             canvas.height = mainVideo.videoHeight;
@@ -95,67 +121,143 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 4. פונקציית התחלת אינטראקציה (Hover/Click)
     function startVideoAndTimer() {
-        if (mainVideo) {
+        if (mainVideo && mainVideo.paused && !followerImage.classList.contains('active')) {
+            mainVideo.play();
+            currentVideoPlaying = true; 
             
-            if (currentMode === 'regular' && mainVideo.paused) { 
-                 mainVideo.play().catch(e => console.error("Regular play failed:", e));
-                 currentVideoPlaying = true;
-                 return;
-            } else if (currentMode === 'regular' && currentVideoPlaying) {
-                return; // אם רגיל וכבר מנגן
-            }
-            
-            // לוגיקת מצבים מפחיד/חמוד
-            if (currentMode !== 'regular') {
-                mainVideo.play().catch(e => console.error(`${currentMode} play failed:`, e));
-                currentVideoPlaying = true;
-            } 
-            
-            // לוגיקת טיימרים
             if (currentMode === 'scary') {
                 fullscreenTimeout = setTimeout(() => {
                     mainCard.classList.add('fullscreen-video');
                     body.classList.add('scary-mode');
                 }, FULLSCREEN_DELAY_MS); 
             } else if (currentMode === 'cute') {
-                 // במצב חמוד, הוידאו ינגן 5 שניות ויעצור
+                // טיימר המשחק מתחיל לאחר ה-5 שניות של הוידאו
                 cuteVideoTimeout = setTimeout(() => {
                     mainVideo.pause(); 
-                    mainVideo.currentTime = 0;
-                    currentVideoPlaying = false;
-                }, 5000); 
+                    mainVideo.style.opacity = 0; 
+                    mainCard.style.pointerEvents = 'none'; 
+                    followerImage.classList.add('active'); 
+                    body.classList.add('hide-cursor'); 
+                    initFishGame(); 
+                }, CUTE_VIDEO_DURATION_MS);
             }
         }
     }
+    
+    // 5. לוגיקת עקיבת עכבר (MouseMove)
+    document.addEventListener('mousemove', (event) => {
+        if (followerImage.classList.contains('active')) {
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            
+            // עדכון מיקום הדב
+            followerImage.style.left = `${mouseX}px`; 
+            followerImage.style.top = `${mouseY}px`;
 
-    // 5. אירועי בקרת משתמש
+            // בדיקת מגע עם דגים
+            if (currentMode === 'cute') {
+                checkFishCollision();
+            }
+        }
+    });
+
+    // 6. פונקציות ניהול דגים
+    function createFish() {
+        const fish = document.createElement('img');
+        fish.src = FISH_IMAGE_SRC;
+        fish.classList.add('fish');
+        fish.dataset.originalScale = 1; 
+        
+        // מיקום אקראי על המסך
+        const minMargin = 80;
+        const x = Math.random() * (window.innerWidth - 2 * minMargin) + minMargin; 
+        const y = Math.random() * (window.innerHeight - 2 * minMargin) + minMargin; 
+        
+        fish.style.left = `${x}px`;
+        fish.style.top = `${y}px`;
+
+        // זווית אקראית
+        const rotation = Math.random() * 360; 
+        fish.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+        
+        fishContainer.appendChild(fish);
+        fishElements.push(fish);
+    }
+
+    function initFishGame() {
+        clearFishGame(); 
+        for (let i = 0; i < FISH_COUNT; i++) {
+            createFish();
+        }
+    }
+
+    function clearFishGame() {
+        fishElements.forEach(fish => fish.remove());
+        fishElements = [];
+        touchedFishCount = 0;
+    }
+
+    function checkFishCollision() {
+        if (!followerImage.classList.contains('active')) return; 
+
+        const followerRect = followerImage.getBoundingClientRect();
+
+        for (let i = fishElements.length - 1; i >= 0; i--) {
+            const fish = fishElements[i];
+            const fishRect = fish.getBoundingClientRect();
+
+            const collision = !(
+                followerRect.right < fishRect.left ||
+                followerRect.left > fishRect.right ||
+                followerRect.bottom < fishRect.top ||
+                followerRect.top > fishRect.bottom
+            );
+
+            if (collision) {
+                touchedFishCount++;
+
+                // 1. הגדלה קריטית של הדב העוקב
+                currentFollowerScale += FOLLOWER_GROW_FACTOR;
+                followerImage.style.transform = `translate(-50%, -50%) scale(${currentFollowerScale})`;
+                
+                // 2. העלמת הדג והסרתו מהמערך
+                fish.remove(); 
+                fishElements.splice(i, 1); 
+
+                // 3. בדיקה אם כל הדגים נגעו
+                if (touchedFishCount === FISH_COUNT) {
+                    setTimeout(() => {
+                        alert("You've collected all the objects! Resetting mode.");
+                        switchMode('regular'); 
+                    }, 500); 
+                    return; 
+                }
+            }
+        }
+    }
+    
+    // 6. אירועי בקרת משתמש
     mainCard.addEventListener('mouseenter', startVideoAndTimer);
     
     mainCard.addEventListener('mouseleave', () => {
-        // עצירת וידאו במצב רגיל בלבד
         if (currentMode === 'regular' && currentVideoPlaying) {
             mainVideo.pause();
             mainVideo.currentTime = 0;
             currentVideoPlaying = false;
         }
-        // ניקוי טיימרים למצבים אחרים
-        if (currentMode !== 'regular') {
-            clearTimeout(fullscreenTimeout);
-            clearTimeout(cuteVideoTimeout);
-        }
     });
     
     mainCard.addEventListener('click', () => {
-        // איפוס במצבים ספציפיים
-        if (mainCard.classList.contains('fullscreen-video') || currentVideoPlaying) { 
-            switchMode('regular'); 
+        const isEffectActive = followerImage.classList.contains('active') || mainCard.classList.contains('fullscreen-video');
+
+        if (isEffectActive || currentVideoPlaying) { 
+            switchMode(currentMode); 
         } else {
-            // אם קליק כששום דבר לא קורה, התחל את האינטראקציה (בדומה ל-mouseenter)
             startVideoAndTimer();
         }
     });
 
-    // 6. לוגיקת כפתורים (מגיבה ל-Click)
+    // 7. לוגיקת כפתורים
     regularModeButton.addEventListener('click', () => switchMode('regular'));
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
     cuteModeButton.addEventListener('click', () => switchMode('cute')); 
