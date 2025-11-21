@@ -4,18 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght=500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
     <header>
         <h1>Interactive Portfolio</h1>
-        </header>
+        
+        <div class="mode-toggle">
+            <button id="regularMode" class="active">Regular</button>
+            <button id="scaryMode">Scary</button>
+            <button id="cuteMode">Cute</button>
+        </div>
+    </header>
 
     <main class="portfolio-grid">
         <div class="project-card" id="mainProjectCard">
             <video class="project-video" muted loop preload="auto" poster="bearimage.png">
-                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                <source id="regularSrc" src="bearvideo.mp4" type="video/mp4"> 
+                <source id="scarySrc" src="scaryvideo.webm" type="video/webm">
+                <source id="cuteSrc" src="cutemagicvideo.mp4" type="video/mp4">
             </video>
             
             <div class="project-info">
@@ -28,10 +36,13 @@
                     </text>
                 </svg>
             </div>
-
-            </div>
+        </div>
     </main>
 
+    <div id="scaryEndScreen" class="scary-end-screen">
+        <button id="resetButton">Restart</button>
+    </div>
+    
     <script src="script.js"></script> 
 </body>
 </html>
