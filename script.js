@@ -16,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
     
     const FULLSCREEN_DELAY_MS = 1500; // קיצרנו מעבר חלק יותר
-    const SCARY_END_HOLD_MS = 3000; 
-    const CUTE_VIDEO_DURATION_MS = 5000; 
+    const SCARY_END_HOLD_MS = 3000;
+    const CUTE_VIDEO_DURATION_MS = 5000;
 
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
-    let scaryEndTimeout = null; 
-    let currentMode = 'regular'; 
-    let currentVideoPlaying = false; 
+    let scaryEndTimeout = null;
+    let currentMode = 'regular';
+    let currentVideoPlaying = false;
     
     // מנגנון הגנה
     if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton) {
@@ -48,18 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mainVideo) {
             mainVideo.pause();
             mainVideo.currentTime = 0;
-            mainVideo.style.opacity = 1; 
+            mainVideo.style.opacity = 1;
         }
-        mainCard.style.pointerEvents = 'auto'; 
-        currentVideoPlaying = false; 
+        mainCard.style.pointerEvents = 'auto';
+        currentVideoPlaying = false;
         
         // איפוס קלאסים ומסך סיום
         mainCard.classList.remove('fullscreen-video');
         body.classList.remove('scary-mode');
         body.classList.remove('hide-cursor');
-        followerImage.classList.remove('active'); 
-        scaryEndScreen.classList.remove('active'); 
-        scaryEndScreen.style.backgroundImage = 'none'; 
+        followerImage.classList.remove('active');
+        scaryEndScreen.classList.remove('active');
+        scaryEndScreen.style.backgroundImage = 'none';
         
         // עדכון כפתורי הסקאלה
         document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
@@ -80,13 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mainVideo) mainVideo.src = REGULAR_VIDEO_SRC;
                 break;
         }
-        if (mainVideo) mainVideo.load(); 
+        if (mainVideo) mainVideo.load();
     }
 
     // 3. לוגיקת סיום למצב מפחיד (פריים אחרון וכפתור)
     mainVideo.onended = () => {
         if (currentMode === 'scary') {
-            mainVideo.pause(); 
+            mainVideo.pause();
             
             // לקיחת הפריים האחרון
             const canvas = document.createElement('canvas');
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scaryEndScreen.style.backgroundImage = `url(${imageUrl})`;
             
             scaryEndTimeout = setTimeout(() => {
-                scaryEndScreen.classList.add('active'); 
+                scaryEndScreen.classList.add('active');
             }, SCARY_END_HOLD_MS);
         }
     };
@@ -107,20 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function startVideoAndTimer() {
         if (mainVideo && mainVideo.paused && !followerImage.classList.contains('active')) {
             mainVideo.play();
-            currentVideoPlaying = true; 
+            currentVideoPlaying = true;
             
             if (currentMode === 'scary') {
                 fullscreenTimeout = setTimeout(() => {
                     mainCard.classList.add('fullscreen-video');
                     body.classList.add('scary-mode');
-                }, FULLSCREEN_DELAY_MS); 
+                }, FULLSCREEN_DELAY_MS);
             } else if (currentMode === 'cute') {
                 cuteVideoTimeout = setTimeout(() => {
-                    mainVideo.pause(); 
-                    mainVideo.style.opacity = 0; 
-                    mainCard.style.pointerEvents = 'none'; 
-                    followerImage.classList.add('active'); 
-                    body.classList.add('hide-cursor'); 
+                    mainVideo.pause();
+                    mainVideo.style.opacity = 0;
+                    mainCard.style.pointerEvents = 'none';
+                    followerImage.classList.add('active');
+                    body.classList.add('hide-cursor');
                 }, CUTE_VIDEO_DURATION_MS);
             }
         }
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const mouseX = event.clientX;
             const mouseY = event.clientY;
             // ה-CSS מטפל בקיזוז למרכז (-50%) - כאן אנו רק מעבירים אותו ל-XY העכבר
-            followerImage.style.left = `${mouseX}px`; 
+            followerImage.style.left = `${mouseX}px`;
             followerImage.style.top = `${mouseY}px`;
         }
     });
@@ -150,8 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
     mainCard.addEventListener('click', () => {
         const isEffectActive = followerImage.classList.contains('active') || mainCard.classList.contains('fullscreen-video');
 
-        if (isEffectActive || currentVideoPlaying) { 
-            switchMode(currentMode); 
+        if (isEffectActive || currentVideoPlaying) {
+            switchMode(currentMode);
         } else {
             startVideoAndTimer();
         }
@@ -160,8 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7. לוגיקת כפתורים
     regularModeButton.addEventListener('click', () => switchMode('regular'));
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
-    cuteModeButton.addEventListener('click', () => switchMode('cute')); 
-    resetButton.addEventListener('click', () => switchMode('regular')); 
+    cuteModeButton.addEventListener('click', () => switchMode('cute'));
+    resetButton.addEventListener('click', () => switchMode('regular'));
 
     // הפעלת מצב רגיל כברירת מחדל
     switchMode('regular');
