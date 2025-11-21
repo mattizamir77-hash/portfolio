@@ -1,4 +1,4 @@
-/* Vibe Coding CSS: עיצוב נקי וסופי - תיקון מעבר Scary Smooth */
+/* Vibe Coding CSS: עיצוב נקי וסופי - פיצ'ר הדגים */
 body {
     background-color: #f4f7f6;
     font-family: 'Montserrat', sans-serif; 
@@ -79,14 +79,12 @@ h1 {
     cursor: pointer;
     border-radius: 50%; 
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
-    
-    /* קריטי: מעבר חלק על כל המאפיינים למשך 0.5 שניות */
     transition: all 0.5s ease-in-out; 
-    
     background-color: #fff; 
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1; /* חשוב שיהיה מתחת ל-fishContainer כשפעיל */
 }
 
 .project-card:hover {
@@ -96,19 +94,12 @@ h1 {
 /* מצב FULL SCREEN אימה - תיקון נקודת מרכז */
 .project-card.fullscreen-video {
     position: fixed !important; 
-    
-    /* ממרכז את העיגול במרכז המסך (50%/50%) */
     top: 50% !important;
     left: 50% !important; 
     transform: translate(-50%, -50%) !important; 
-    
-    /* קריטי: המעבר עצמו */
     width: 100vw !important; 
     height: 100vh !important; 
-    
-    /* מוריד את הרדיוס לאפס (הופך לעיגול למרובע) */
     border-radius: 0 !important; 
-    
     z-index: 1000 !important;
     overflow: hidden !important;
     background-color: transparent !important; 
@@ -190,8 +181,7 @@ h1 {
     width: 240px; 
     height: auto;
     opacity: 0; 
-    /* קריטי: ממקם את מרכז התמונה על קואורדינטות העכבר שנקבעו ב-JS */
-    transform: translate(-50%, -50%); 
+    transform: translate(-50%, -50%); /* ממקם את מרכז התמונה על קואורדינטות העכבר */
 }
 
 .follower.active {
@@ -228,4 +218,42 @@ h1 {
     cursor: pointer;
     font-size: 1.2em;
     font-weight: 700;
+}
+
+/* *** פיצ'ר הדגים *** */
+#fishContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* קריטי: מאפשר לחיצות דרך הקונטיינר */
+    z-index: 500; /* מתחת לעוקב, מעל ה-mainCard */
+}
+
+.fish {
+    position: absolute;
+    width: 80px; /* גודל התחלתי של הדג */
+    height: auto;
+    cursor: pointer; /* יהפוך לסמן יד כשהדגים פעילים */
+    user-select: none; /* מונע בחירת תמונה */
+    transition: transform 0.1s ease-out, opacity 0.5s ease-in-out; /* אנימציה של גדילה ודהייה */
+    opacity: 0; /* מוסתר בהתחלה */
+    animation: fadeInScale 0.5s forwards ease-out; /* אנימציית הופעה */
+}
+
+.fish.hit {
+    /* סגנון כשנוגעים בדג - ניתן להוסיף אנימציית "פגיעה" */
+    opacity: 0.8; 
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
