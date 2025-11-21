@@ -12,16 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const fishContainer = document.getElementById('fishContainer'); 
 
     // הגדרת קבצי הוידאו
-    const REGULAR_VIDEO_SRC = 'bearvideo.mp4'; // נניח שהקובץ המקומי קיים
+    const REGULAR_VIDEO_SRC = 'bearvideo.mp4'; 
     const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
-    const FISH_IMAGE_SRC = 'fish.png'; // קובץ הדג
+    const FISH_IMAGE_SRC = 'fish.png'; 
 
     const FULLSCREEN_DELAY_MS = 1500; 
     const SCARY_END_HOLD_MS = 3000; 
     const CUTE_VIDEO_DURATION_MS = 5000; 
     const FISH_COUNT = 10;
-    const FOLLOWER_GROW_FACTOR = 0.1; 
+    const FOLLOWER_GROW_FACTOR = 0.25; // <--- תוקן: גדילה של 25% במגע
     
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
@@ -90,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 cuteModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = CUTE_MAGIC_VIDEO_SRC;
                 
-                // *** FIX: נסיר את הטיימר המפעיל את המשחק מה-switchMode ***
                 // המשחק יופעל כעת רק מתוך startVideoAndTimer
                 break; 
             default: // 'regular'
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // 4. פונקציית התחלת אינטראקציה (Hover/Click) - התיקון העיקרי ל-CUTE
+    // 4. פונקציית התחלת אינטראקציה (Hover/Click)
     function startVideoAndTimer() {
         if (mainVideo && mainVideo.paused && !followerImage.classList.contains('active')) {
             mainVideo.play();
@@ -132,20 +131,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     body.classList.add('scary-mode');
                 }, FULLSCREEN_DELAY_MS); 
             } else if (currentMode === 'cute') {
-                // *** FIX: טיימר המשחק מתחיל לאחר ה-5 שניות של הוידאו ***
+                // טיימר המשחק מתחיל לאחר ה-5 שניות של הוידאו
                 cuteVideoTimeout = setTimeout(() => {
                     mainVideo.pause(); 
                     mainVideo.style.opacity = 0; 
                     mainCard.style.pointerEvents = 'none'; 
                     followerImage.classList.add('active'); 
                     body.classList.add('hide-cursor'); 
-                    initFishGame(); // <--- הדגים והדב מתחילים לזוז יחד
+                    initFishGame(); 
                 }, CUTE_VIDEO_DURATION_MS);
             }
         }
     }
     
-    // 5. לוגיקת עקיבת עכבר (MouseMove) - בדיקת מיקום מרכזי
+    // 5. לוגיקת עקיבת עכבר (MouseMove)
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
             const mouseX = event.clientX;
