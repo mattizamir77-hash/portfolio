@@ -181,21 +181,38 @@ h1 {
     display: none !important;
 }
 
-/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל (מוקטן ל-80px) */
+/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל (הגודל ההתחלתי) */
 .follower {
     position: fixed;
     pointer-events: none;
     z-index: 10000;
-    transition: transform 0.1s ease-out;
-    width: 80px;
-    height: auto;
+    transition: all 0.1s ease-out; /* הוספת מעבר לשינוי גודל חלק */
+    
+    /* שימוש במשתנה CSS לגודל דינמי, הגודל ההתחלתי הוא 80px */
+    width: var(--follower-size, 80px);
+    height: var(--follower-size, 80px);
+    
     opacity: 0;
-    /* קריטי: ממקם את מרכז התמונה על קואורדינטות העכבר שנקבעו ב-JS */
     transform: translate(-50%, -50%);
 }
 
 .follower.active {
     opacity: 1;
+}
+
+/* 🐟 הגדרות הדגים לאיסוף */
+.collectible-fish {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    width: 50px; /* גודל קטן לדגים לאיסוף */
+    height: 50px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.collectible-fish.collected {
+    opacity: 0;
 }
 
 /* מסך סוף האימה (כפתור החזרה) */
