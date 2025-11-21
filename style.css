@@ -181,7 +181,7 @@ h1 {
     display: none !important;
 }
 
-/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל (הגודל ההתחלתי) */
+/* תמונה עוקבת אחרי עכבר - תיקון גודל ושמירת יחס גובה-רוחב */
 .follower {
     position: fixed;
     pointer-events: none;
@@ -190,7 +190,7 @@ h1 {
     
     /* שימוש במשתנה CSS לגודל דינמי, הגודל ההתחלתי הוא 80px */
     width: var(--follower-size, 80px);
-    height: var(--follower-size, 80px);
+    height: auto; /* תיקון: גובה אוטומטי כדי לשמור על יחס גובה-רוחב */
     
     opacity: 0;
     transform: translate(-50%, -50%);
@@ -206,7 +206,7 @@ h1 {
     pointer-events: none;
     z-index: 9999;
     width: 50px; /* גודל קטן לדגים לאיסוף */
-    height: 50px;
+    height: auto; /* שמירה על יחס גובה-רוחב */
     opacity: 1;
     transition: opacity 0.3s ease;
 }
@@ -214,6 +214,28 @@ h1 {
 .collectible-fish.collected {
     opacity: 0;
 }
+
+/* הודעת "DONE" */
+#doneMessage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5em;
+    font-weight: 900;
+    color: #4CAF50; /* צבע ירוק לדוגמה */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    z-index: 10002;
+    display: none; /* מוסתר כברירת מחדל */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#doneMessage.active {
+    display: block;
+    opacity: 1;
+}
+
 
 /* מסך סוף האימה (כפתור החזרה) */
 .scary-end-screen {
