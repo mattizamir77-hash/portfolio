@@ -1,71 +1,42 @@
-<header>
-    <h1>תיק עבודות - הדר הדגמה</h1>
-    <p>על כל כרטיס יפעיל את הסרטון של הפרויקט (Hover) מעבר עכבר</p>
-    
-    <div class="mode-toggle">
-        <button id="regularMode" class="active">רגיל</button>
-        <button id="scaryMode">מפחיד</button>
-    </div>
-</header>
-<main>
-    <div class="portfolio-grid">
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תיק עבודות - מתי</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <header>
+        <h1>תיק עבודות - הדר הדגמה</h1>
+        <p>מעבר עכבר יפעיל את הסרטון. לחץ על הלחצנים למטה לבחירת מצב.</p>
         
+        <div class="mode-toggle">
+            <button id="regularMode" class="active">רגיל</button>
+            <button id="scaryMode">מפחיד</button>
+        </div>
+    </header>
+
+    <main class="portfolio-grid">
         <div class="project-card" id="mainProjectCard">
             <video class="project-video" muted loop preload="none">
-                <source src="bearvideo.mp4" type="video/mp4">
-                <source src="scaryvideo.mp4" type="video/mp4"> </video>
+                <source id="regularSrc" src="bearvideo.mp4" type="video/mp4"> 
+                <source id="scarySrc" src="scaryvideo.mp4" type="video/mp4">
+            </video>
             
             <div class="project-info">
-                <h3>פרויקט הדב המפשיר</h3>
-                <p>הצגת פרויקט ייחודי באנימציה חלקה</p>
-                
-                <svg class="curve-text-svg" viewBox="0 0 300 300" width="300" height="300">
-                    <path id="curvePath" d="M 50,250 a 100,100 0 0,1 200,0" fill="transparent"/>
-                    <text width="100%">
-                        <textPath class="curved-text" href="#curvePath" startOffset="50%" text-anchor="middle">
+                <svg viewBox="0 0 300 300" class="curve-text-svg">
+                    <path id="curve-path" fill="none" d="M 25 150 A 125 125 0 0 0 275 150" />
+                    <text class="curved-text">
+                        <textPath href="#curve-path" startOffset="50%" text-anchor="middle">
                             Recycled Styrofoam Objects
                         </textPath>
                     </text>
                 </svg>
             </div>
         </div>
-        
-        ```
-
----
-
-## 2. 💅 עדכון קובץ `style.css` (עיצוב ו-Full Screen)
-
-נוסיף עיצוב לכפתורים ונכין את ה-CSS עבור מצב המסך המלא (`.fullscreen-video`).
-
-אנא פתח את קובץ **`style.css`** והוסף את הקודים הבאים:
-
-### א. הוסף מתחת ל-`header` (בערך שורה 15)
-
-```css
-/* מתג מצבים (Toggle Switch) */
-.mode-toggle {
-    margin: 20px auto;
-    display: flex;
-    gap: 10px;
-}
-
-.mode-toggle button {
-    padding: 8px 15px;
-    border: 2px solid #1a73e8;
-    background-color: transparent;
-    color: #1a73e8;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 600;
-}
-
-.mode-toggle button:hover {
-    background-color: rgba(26, 115, 232, 0.1);
-}
-
-.mode-toggle button.active {
-    background-color: #1a73e8;
-    color: white;
-}
+    </main>
+    <script src="script.js"></script> 
+</body>
+</html>
