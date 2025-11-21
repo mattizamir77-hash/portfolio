@@ -181,6 +181,8 @@ h1 {
     height: auto;
     opacity: 0; 
     transform: translate(-50%, -50%); 
+    left: 0; 
+    top: 0;
 }
 
 .follower.active {
@@ -232,7 +234,7 @@ h1 {
 
 .fish {
     position: absolute;
-    width: 45px; /* <--- תוקן: גודל הדגים הוגדל */
+    width: 135px; /* <--- תוקן: גודל הדגים הוגדל פי 3 */
     height: auto;
     cursor: pointer; 
     user-select: none; 
