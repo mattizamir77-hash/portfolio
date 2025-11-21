@@ -13,7 +13,7 @@ body {
     min-height: 100vh;
 }
 
-/* ... (שאר הקוד הכללי נשאר זהה) ... */
+/* ... (שאר קוד הכללי נשאר זהה) ... */
 
 /* כרטיס הפרויקט (עיגול!) */
 .project-card {
@@ -29,6 +29,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.project-card:hover {
+    transform: translateY(-5px); 
 }
 
 /* אלמנט הוידאו / תמונת הפוסטר */
@@ -50,28 +54,28 @@ body {
     position: absolute;
     bottom: 0; 
     width: 100%;
-    height: 100%; /* כדי למקם את ה-SVG */
-    background-color: rgba(0, 0, 0, 0.0); /* ללא רקע שחור */
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.0); 
     transition: all 0.4s ease; 
     z-index: 10; 
-    pointer-events: none; /* מאפשר לחיצה דרך הטקסט אל הסרטון */
+    pointer-events: none; 
 }
 
 /* הגדרות ה-SVG עבור הטקסט הקשתי */
 .curve-text-svg {
     position: absolute;
-    bottom: 0;
+    bottom: -30px; 
     width: 100%;
     height: 100%;
-    overflow: visible; /* מאפשר לטקסט לצאת מהגבולות */
+    overflow: visible; 
 }
 
 .curved-text {
-    fill: white; /* צבע הטקסט לבן (כדי לבלוט על רקע הדוב) */
-    font-size: 1.25em; /* גודל פונט יפה */
+    fill: white; 
+    font-size: 1.1em; /* <-- הוקטן! */
     font-weight: 700;
     letter-spacing: 1px;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8); /* צל כדי להבליט על הוידאו הבהיר */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
     transition: all 0.4s ease;
 }
 
@@ -81,7 +85,6 @@ body {
     filter: grayscale(0%); 
 }
 
-/* העלמת הטקסט הקשתי במעבר עכבר */
 .project-card:hover .curved-text {
     opacity: 0; /* הטקסט נעלם */
 }
