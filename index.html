@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תיק עבודות - מתי</title>
+    <title>Interactive Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
     <header>
-        <h1>תיק עבודות - הדר הדגמה</h1>
-        <p>מעבר עכבר יפעיל את הסרטון. לחץ על הלחצנים למטה לבחירת מצב.</p>
+        <h1>Interactive Portfolio</h1>
         
         <div class="mode-toggle">
-            <button id="regularMode" class="active">רגיל</button>
-            <button id="scaryMode">מפחיד</button>
-            <button id="cuteMode">חמוד</button>
+            <button id="regularMode" class="active">Regular</button>
+            <button id="scaryMode">Scary</button>
+            <button id="cuteMode">Cute</button>
         </div>
     </header>
 
@@ -39,8 +38,12 @@
             </div>
         </div>
     </main>
+
+    <div id="scaryEndScreen" class="scary-end-screen">
+        <button id="resetButton">Restart</button>
+    </div>
     
-    <img src="follower_image.png" id="followerImage" class="follower" alt="עוקב אחרי עכבר"> 
+    <img src="follower_image.png" id="followerImage" class="follower" alt="Mouse Follower"> 
 
     <script src="script.js"></script> 
 </body>
