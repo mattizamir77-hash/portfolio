@@ -11,6 +11,10 @@
     <header>
         <h1>Interactive Portfolio</h1>
         
+        <p>מעבר עכבר יפעיל את הסרטון. לחץ על הלחצנים למטה לבחירת מצב.</p>
+
+        <div id="fishCounterDisplay" class="counter"></div>
+        
         <div class="mode-toggle">
             <button id="regularMode" class="active">Regular</button>
             <button id="scaryMode">Scary</button>
@@ -21,7 +25,7 @@
     <main class="portfolio-grid">
         <div class="project-card" id="mainProjectCard">
             <video class="project-video" muted loop preload="auto" poster="bearimage.png">
-                <source id="regularSrc" src="bearregular.webm" type="video/webm"> 
+                <source id="regularSrc" src="bearvideo.mp4" type="video/mp4"> 
                 <source id="scarySrc" src="scaryvideo.webm" type="video/webm">
                 <source id="cuteSrc" src="cutemagicvideo.mp4" type="video/mp4">
             </video>
@@ -44,7 +48,8 @@
     </div>
     
     <img src="follower_image.png" id="followerImage" class="follower" alt="Mouse Follower"> 
+    <div id="fishContainer"></div>
 
-    <div id="fishContainer"></div> <script src="script.js"></script> 
+    <script src="script.js"></script> 
 </body>
 </html>
