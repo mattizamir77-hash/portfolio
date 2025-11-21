@@ -1,12 +1,12 @@
 /* Vibe Coding CSS: עיצוב נקי וסופי - תיקון מעבר Scary Smooth */
 body {
     background-color: #f4f7f6;
-    font-family: 'Montserrat', sans-serif; 
+    font-family: 'Montserrat', sans-serif;
     color: #333;
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    display: flex; 
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -14,7 +14,7 @@ body {
 }
 
 body.scary-mode {
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 body.hide-cursor {
@@ -26,8 +26,8 @@ header {
     padding: 40px 20px 20px;
     background-color: #ffffff;
     border-bottom: 2px solid #e0e0e0;
-    width: 100%; 
-    position: fixed; 
+    width: 100%;
+    position: fixed;
     top: 0;
     z-index: 20;
 }
@@ -73,45 +73,45 @@ h1 {
 /* כרטיס הפרויקט (עיגול!) */
 .project-card {
     position: relative;
-    overflow: hidden; 
+    overflow: hidden;
     width: 300px;
-    height: 300px; 
+    height: 300px;
     cursor: pointer;
-    border-radius: 50%; 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
+    border-radius: 50%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     
     /* קריטי: מעבר חלק על כל המאפיינים למשך 0.5 שניות */
-    transition: all 0.5s ease-in-out; 
+    transition: all 0.5s ease-in-out;
     
-    background-color: #fff; 
+    background-color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .project-card:hover {
-    transform: translateY(-5px); 
+    transform: translateY(-5px);
 }
 
 /* מצב FULL SCREEN אימה - תיקון נקודת מרכז */
 .project-card.fullscreen-video {
-    position: fixed !important; 
+    position: fixed !important;
     
     /* ממרכז את העיגול במרכז המסך (50%/50%) */
     top: 50% !important;
-    left: 50% !important; 
-    transform: translate(-50%, -50%) !important; 
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     
     /* קריטי: המעבר עצמו */
-    width: 100vw !important; 
-    height: 100vh !important; 
+    width: 100vw !important;
+    height: 100vh !important;
     
     /* מוריד את הרדיוס לאפס (הופך לעיגול למרובע) */
-    border-radius: 0 !important; 
+    border-radius: 0 !important;
     
     z-index: 1000 !important;
     overflow: hidden !important;
-    background-color: transparent !important; 
+    background-color: transparent !important;
 }
 
 /* אלמנט הוידאו / תמונת הפוסטר */
@@ -121,44 +121,44 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; 
-    opacity: 1; 
-    transition: opacity 0.4s ease; 
-    border-radius: 50%; 
-    filter: grayscale(100%); 
+    object-fit: cover;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    border-radius: 50%;
+    filter: grayscale(100%);
 }
 
 /* תיקון קריטי למניעת מריחה: הוידאו צריך למלא את המסך */
 .project-card.fullscreen-video .project-video {
-    width: 100% !important; 
+    width: 100% !important;
     height: 100% !important;
-    border-radius: 0 !important; 
-    object-fit: cover !important; 
+    border-radius: 0 !important;
+    object-fit: cover !important;
 }
 
 /* שכבת הכיתוב - ממוקמת בתחתית ומכילה את ה-SVG */
 .project-info {
     position: absolute;
-    bottom: 0; 
+    bottom: 0;
     width: 100%;
-    height: 100%; 
-    background-color: rgba(0, 0, 0, 0.0); 
-    transition: all 0.4s ease; 
-    z-index: 10; 
-    pointer-events: none; 
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.0);
+    transition: all 0.4s ease;
+    z-index: 10;
+    pointer-events: none;
 }
 
 /* הגדרות ה-SVG עבור הטקסט הקשתי */
 .curve-text-svg {
     position: absolute;
-    bottom: -10px; 
+    bottom: -10px;
     width: 100%;
     height: 100%;
-    overflow: visible; 
+    overflow: visible;
 }
 
 .curved-text {
-    fill: black; 
+    fill: black;
     font-size: 1.0em;
     font-weight: 700;
     letter-spacing: 1px;
@@ -168,12 +168,12 @@ h1 {
 
 /* *** אפקט ה-Hover: העלמת הטקסט וחשיפת הצבע המלא *** */
 .project-card:hover .project-video {
-    opacity: 1; 
-    filter: grayscale(0%); 
+    opacity: 1;
+    filter: grayscale(0%);
 }
 
 .project-card:hover .curved-text {
-    opacity: 0; 
+    opacity: 0;
 }
 
 /* העלמת הכיתוב במצב Fullscreen */
@@ -183,19 +183,20 @@ h1 {
 
 /* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל */
 .follower {
-    position: fixed; 
-    pointer-events: none; 
-    z-index: 10000; 
-    transition: transform 0.1s ease-out; 
-    width: 240px; 
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    transition: transform 0.1s ease-out;
+    /* שינוי קריטי: הקטנת הרוחב מ-240px ל-80px */
+    width: 80px;
     height: auto;
-    opacity: 0; 
+    opacity: 0;
     /* קריטי: ממקם את מרכז התמונה על קואורדינטות העכבר שנקבעו ב-JS */
-    transform: translate(-50%, -50%); 
+    transform: translate(-50%, -50%);
 }
 
 .follower.active {
-    opacity: 1; 
+    opacity: 1;
 }
 
 /* מסך סוף האימה (כפתור החזרה) */
