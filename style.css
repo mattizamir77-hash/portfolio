@@ -6,6 +6,11 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
+    display: flex; /* למיקום מרכזי */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* מתיחה לגובה המסך המלא */
 }
 
 header {
@@ -13,6 +18,10 @@ header {
     padding: 40px 20px 20px;
     background-color: #ffffff;
     border-bottom: 2px solid #e0e0e0;
+    width: 100%; /* למתיחה מלאה */
+    position: fixed; /* כדי שהכותרת לא תזוז */
+    top: 0;
+    z-index: 20;
 }
 
 h1 {
@@ -23,37 +32,44 @@ h1 {
 .portfolio-grid {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
     gap: 30px;
     padding: 50px 20px;
+    margin-top: 150px; /* רווח מהכותרת */
 }
 
-/* כרטיס הפרויקט (המיכל הראשי) */
+/* כרטיס הפרויקט (המיכל הראשי) - עכשיו עיגול! */
 .project-card {
     position: relative;
     overflow: hidden; 
-    width: 300px;
-    height: 200px;
+    width: 300px; /* רוחב העיגול */
+    height: 300px; /* גובה העיגול - חייב להיות שווה לרוחב! */
     cursor: pointer;
-    border-radius: 12px; 
+    border-radius: 50%; /* הופך את הצורה לעיגול! */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     transition: transform 0.3s ease;
+    background-color: #fff; /* רקע לבן כברירת מחדל */
+    display: flex; /* כדי למרכז את התוכן */
+    align-items: center;
+    justify-content: center;
 }
 
 .project-card:hover {
     transform: translateY(-5px); 
 }
 
-/* אלמנט הוידאו - מוסתר בהתחלה */
+/* אלמנט הוידאו - מכסה את כל העיגול */
 .project-video {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; 
-    opacity: 0; 
+    object-fit: cover; /* ימלא את העיגול מבלי לעוות */
+    opacity: 0; /* מוסתר בהתחלה */
     transition: opacity 0.4s ease; 
+    border-radius: 50%; /* חשוב: גם הוידאו יהיה עגול */
 }
 
 /* שכבת התוכן - יושבת מעל הוידאו */
@@ -61,12 +77,14 @@ h1 {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.85); 
+    /* רקע שחור יותר אטום כדי להבליט טקסט על סרטון בהיר */
+    background-color: rgba(0, 0, 0, 0.75); 
     color: white;
     padding: 15px;
     box-sizing: border-box;
     transition: background-color 0.4s ease;
     z-index: 10; 
+    text-align: center; /* מרכוז טקסט */
 }
 
 .project-info h3 {
@@ -84,5 +102,7 @@ h1 {
 }
 
 .project-card:hover .project-info {
-    background-color: rgba(0, 0, 0, 0.4); 
+    /* הופך את השכבה לשקופה לחלוטין במעבר עכבר (כדי לראות את הוידאו) */
+    background-color: rgba(0, 0, 0, 0.0); 
+    color: transparent; /* הופך את הטקסט לשקוף */
 }
