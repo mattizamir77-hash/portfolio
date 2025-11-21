@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const fishContainer = document.getElementById('collectibleFishContainer');
     const doneMessage = document.getElementById('doneMessage');
     const scaryRoarSound = document.getElementById('scaryRoarSound');
-    const eatingSound = document.getElementById('eatingSound'); // NEW: אלמנט סאונד אכילה
+    const eatingSound = document.getElementById('eatingSound');
+    const magicSound = document.getElementById('magicSound'); // NEW: אלמנט סאונד קסם
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearregular.webm';
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const SCARY_END_HOLD_MS = 3000;
     const CUTE_VIDEO_DURATION_MS = 5000;
     const NUMBER_OF_FISH = 10;
-    const FOLLOWER_SIZE_INCREMENT = 35; // NEW: הגדלה משמעותית יותר (היה 20)
+    const FOLLOWER_SIZE_INCREMENT = 35; 
     let currentFollowerSize = 80;
     let collectedFishCount = 0;
 
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentVideoPlaying = false;
     
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !doneMessage || !scaryRoarSound || !eatingSound) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !doneMessage || !scaryRoarSound || !eatingSound || !magicSound) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
@@ -81,11 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isColliding) {
                 // 1. הגדלת ה-Follower
-                currentFollowerSize += FOLLOWER_SIZE_INCREMENT; // גדילה משמעותית
+                currentFollowerSize += FOLLOWER_SIZE_INCREMENT; 
                 body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
 
-                // 2. הפעלת סאונד אכילה (NEW)
-                eatingSound.currentTime = 0; // מאפס את הסאונד כדי שיוכל להתנגן מיד שוב
+                // 2. הפעלת סאונד אכילה 
+                eatingSound.currentTime = 0; 
                 eatingSound.play().catch(e => console.log("Eating sound playback blocked:", e));
 
                 // 3. העלמת הדג
@@ -111,8 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // עצירה ואיפוס סאונד
         scaryRoarSound.pause(); 
         scaryRoarSound.currentTime = 0; 
-        eatingSound.pause(); // NEW
-        eatingSound.currentTime = 0; // NEW
+        eatingSound.pause(); 
+        eatingSound.currentTime = 0; 
+        magicSound.pause(); // NEW
+        magicSound.currentTime = 0; // NEW
         
         // עצירה ואיפוס וידאו
         if (mainVideo) {
@@ -196,6 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 scaryRoarSound.play().catch(e => console.log("Sound playback blocked:", e));
 
             } else if (currentMode === 'cute') {
+                // NEW: הפעלת צליל קסם מיד בכניסה למצב Cute
+                magicSound.play().catch(e => console.log("Magic sound playback blocked:", e));
+                
                 cuteVideoTimeout = setTimeout(() => {
                     mainVideo.pause();
                     mainVideo.style.opacity = 0;
