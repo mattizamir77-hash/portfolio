@@ -7,30 +7,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const cuteModeButton = document.getElementById('cuteMode');
     const body = document.body;
     const followerImage = document.getElementById('followerImage');
+    const scaryEndScreen = document.getElementById('scaryEndScreen'); // מסך סיום חדש
+    const resetButton = document.getElementById('resetButton'); // כפתור חזרה
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearvideo.mp4';
     const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
     
-    const FULLSCREEN_DELAY_MS = 3000; // 3 שניות לאפקט המפחיד
-    const CUTE_VIDEO_DURATION_MS = 5000; // 5 שניות לווידאו החמוד
-    
+    const FULLSCREEN_DELAY_MS = 3000; // 3 שניות לפריצה למסך מלא
+    const SCARY_END_HOLD_MS = 3000; // 3 שניות להשהיית פריים אחרון
+    const CUTE_VIDEO_DURATION_MS = 5000; 
+
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
+    let scaryEndTimeout = null; // טיימר להשהיית הפריים הסופי
     let currentMode = 'regular'; 
     
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
 
-    // 2. פונקציית מעבר מצבים
+    // 2. פונקציית מעבר מצבים (איפוס וטעינה מחדש)
     function switchMode(mode) {
-        // איפוס כל הטיימרים והמצבים הקודמים
+        // ניקוי טיימרים
         clearTimeout(fullscreenTimeout);
         clearTimeout(cuteVideoTimeout);
+        clearTimeout(scaryEndTimeout);
         
         // עצירה ואיפוס וידאו
         mainVideo.pause();
@@ -38,16 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
         mainVideo.style.opacity = 1; 
         mainCard.style.pointerEvents = 'auto'; 
         
-        // איפוס קלאסים
+        // איפוס קלאסים ומסך סיום
         mainCard.classList.remove('fullscreen-video');
         body.classList.remove('scary-mode');
         body.classList.remove('hide-cursor');
         followerImage.classList.remove('active'); 
+        scaryEndScreen.classList.remove('active'); // מסתיר מסך סיום
         
         // עדכון כפתורי הסקאלה
-        regularModeButton.classList.remove('active');
-        scaryModeButton.classList.remove('active');
-        cuteModeButton.classList.remove('active');
+        document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
         
         currentMode = mode;
 
@@ -55,22 +59,31 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'scary':
                 scaryModeButton.classList.add('active');
                 mainVideo.src = SCARY_VIDEO_SRC;
-                mainVideo.load();
                 break;
             case 'cute':
                 cuteModeButton.classList.add('active');
                 mainVideo.src = CUTE_MAGIC_VIDEO_SRC;
-                mainVideo.load();
                 break;
             default: // 'regular'
                 regularModeButton.classList.add('active');
                 mainVideo.src = REGULAR_VIDEO_SRC;
-                mainVideo.load();
                 break;
         }
+        mainVideo.load();
     }
+
+    // 3. לוגיקת סיום למצב מפחיד (פריים אחרון וכפתור)
+    mainVideo.onended = () => {
+        if (currentMode === 'scary') {
+            mainVideo.pause(); // משאיר את הפריים האחרון
+            
+            scaryEndTimeout = setTimeout(() => {
+                scaryEndScreen.classList.add('active'); // מציג כפתור חזרה
+            }, SCARY_END_HOLD_MS);
+        }
+    };
     
-    // 3. פונקציית התחלת אינטראקציה
+    // 4. פונקציית התחלת אינטראקציה (Hover/Click)
     function startVideoAndTimer() {
         if (mainVideo.paused && !followerImage.classList.contains('active')) {
             mainVideo.play();
@@ -91,20 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
-    // 4. פונקציית איפוס כללית (מופעלת רק בלחיצה)
-    function stopVideoAndReset() {
-        switchMode(currentMode);
-    }
     
-    // 5. לוגיקת עקיבת עכבר עבור followerImage 
+    // 5. לוגיקת עקיבת עכבר (MouseMove)
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
             const mouseX = event.clientX;
             const mouseY = event.clientY;
-            followerImage.style.transform = `translate(${mouseX - 30}px, ${mouseY - 30}px)`; 
+            // הוסר הקיזוז הקבוע! - המיקום מתעדכן ל-XY העכבר
+            followerImage.style.transform = `translate(${mouseX}px, ${mouseY}px)`; 
         }
     });
+
 
     // 6. אירועי בקרת משתמש
     mainCard.addEventListener('mouseenter', startVideoAndTimer);
@@ -113,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEffectActive = followerImage.classList.contains('active') || mainCard.classList.contains('fullscreen-video');
 
         if (isEffectActive || !mainVideo.paused) {
-            stopVideoAndReset();
+            switchMode(currentMode); // איפוס מלא
         } else {
             startVideoAndTimer();
         }
@@ -123,7 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     regularModeButton.addEventListener('click', () => switchMode('regular'));
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
     cuteModeButton.addEventListener('click', () => switchMode('cute')); 
-    
+    resetButton.addEventListener('click', () => switchMode('regular')); // כפתור "Restart"
+
     // הפעלת מצב רגיל כברירת מחדל
     switchMode('regular');
 });
