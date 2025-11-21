@@ -9,15 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const followerImage = document.getElementById('followerImage');
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
+    const fishContainer = document.getElementById('collectibleFishContainer'); // NEW
 
     // הגדרת קבצי הוידאו
-    const REGULAR_VIDEO_SRC = 'bearregular.webm'; // <-- עודכן ל-webm
+    const REGULAR_VIDEO_SRC = 'bearregular.webm';
     const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
     
-    const FULLSCREEN_DELAY_MS = 1500; // קיצרנו מעבר חלק יותר
+    const FULLSCREEN_DELAY_MS = 1500;
     const SCARY_END_HOLD_MS = 3000;
     const CUTE_VIDEO_DURATION_MS = 5000;
+    const NUMBER_OF_FISH = 10; // NEW
+    const FOLLOWER_SIZE_INCREMENT = 10; // NEW: הגדלה של 10px לכל דג שנאסף
+    let currentFollowerSize = 80; // NEW: גודל התחלתי ב-CSS
 
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
@@ -26,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentVideoPlaying = false;
     
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
@@ -34,9 +38,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // פונקציה שמבטיחה שהוידאו מוכן לניגון (Regular Mode Fix)
     mainVideo.onloadeddata = () => {
         if (currentMode === 'regular') {
-            mainVideo.style.opacity = 1; // מוודא שהתמונה הלבנה מופיעה (אם יש פוסטר)
+            mainVideo.style.opacity = 1;
         }
     };
+
+    // NEW: יצירת הדגים לאיסוף
+    function createCollectibleFish() {
+        if (fishContainer) fishContainer.innerHTML = ''; // מנקה דגים קודמים
+        
+        for (let i = 0; i < NUMBER_OF_FISH; i++) {
+            const fish = document.createElement('img');
+            fish.src = 'fish.png';
+            fish.classList.add('collectible-fish');
+            fish.style.left = `${Math.random() * (window.innerWidth - 100) + 50}px`; // מיקום אקראי
+            fish.style.top = `${Math.random() * (window.innerHeight - 100) + 50}px`;
+            fishContainer.appendChild(fish);
+        }
+    }
+
+    // NEW: בדיקת התנגשות (Collision Detection)
+    function checkCollision() {
+        if (!followerImage.classList.contains('active')) return;
+        
+        const followerRect = followerImage.getBoundingClientRect();
+        const fishes = document.querySelectorAll('.collectible-fish:not(.collected)');
+        
+        fishes.forEach(fish => {
+            const fishRect = fish.getBoundingClientRect();
+
+            // בדיקת התנגשות בין שני מלבנים
+            const isColliding = !(
+                followerRect.right < fishRect.left ||
+                followerRect.left > fishRect.right ||
+                followerRect.bottom < fishRect.top ||
+                followerRect.top > fishRect.bottom
+            );
+
+            if (isColliding) {
+                // 1. הגדלת ה-Follower
+                currentFollowerSize += FOLLOWER_SIZE_INCREMENT;
+                body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
+
+                // 2. העלמת הדג
+                fish.classList.add('collected');
+                console.log(`Fish collected! Follower size is now: ${currentFollowerSize}px`);
+            }
+        });
+    }
+
 
     // 2. פונקציית מעבר מצבים (איפוס וטעינה מחדש)
     function switchMode(mode) {
@@ -52,6 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         mainCard.style.pointerEvents = 'auto';
         currentVideoPlaying = false;
+        
+        // איפוס גודל הדב ודגים
+        currentFollowerSize = 80;
+        body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
+        if (fishContainer) fishContainer.innerHTML = ''; // מנקה את כל הדגים לאיסוף
         
         // איפוס קלאסים ומסך סיום
         mainCard.classList.remove('fullscreen-video');
@@ -121,19 +175,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     mainCard.style.pointerEvents = 'none';
                     followerImage.classList.add('active');
                     body.classList.add('hide-cursor');
+                    
+                    // NEW: יצירת הדגים רק לאחר שהוידאו הסתיים
+                    createCollectibleFish();
                 }, CUTE_VIDEO_DURATION_MS);
             }
         }
     }
     
-    // 5. לוגיקת עקיבת עכבר (MouseMove) - תיקון למיקום מרכזי
+    // 5. לוגיקת עקיבת עכבר (MouseMove) - תיקון למיקום מרכזי וזיהוי התנגשות
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
             const mouseX = event.clientX;
             const mouseY = event.clientY;
-            // ה-CSS מטפל בקיזוז למרכז (-50%) - כאן אנו רק מעבירים אותו ל-XY העכבר
+            
             followerImage.style.left = `${mouseX}px`;
             followerImage.style.top = `${mouseY}px`;
+            
+            // NEW: בדיקת התנגשות כל פעם שהעכבר זז
+            if (currentMode === 'cute') {
+                checkCollision();
+            }
         }
     });
 
