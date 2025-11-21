@@ -1,7 +1,7 @@
-/* Vibe Coding CSS: עיצוב נקי ומודרני (גרסה עגולה עם תמונת פוסטר) */
+/* Vibe Coding CSS: עיצוב נקי ומודרני (עיגול סופי) */
 body {
     background-color: #f4f7f6;
-    font-family: 'Futura', 'Trebuchet MS', Arial, sans-serif; /* הפונט עודכן ל-Futura */
+    font-family: 'Montserrat', sans-serif; /* הפונט עודכן למונסראט */
     color: #333;
     line-height: 1.6;
     margin: 0;
@@ -46,7 +46,7 @@ h1 {
     width: 300px;
     height: 300px; 
     cursor: pointer;
-    border-radius: 50%; /* הופך את הצורה לעיגול! */
+    border-radius: 50%; 
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     transition: transform 0.3s ease;
     background-color: #fff; 
@@ -67,43 +67,41 @@ h1 {
     width: 100%;
     height: 100%;
     object-fit: cover; 
-    /* ברירת המחדל תהיה 1 (מוצג) בזכות תמונת הפוסטר */
     opacity: 1; 
     transition: opacity 0.4s ease; 
-    border-radius: 50%; /* הוידאו הופך עגול */
-    filter: grayscale(100%); /* הופך את התמונה לשחור-לבן */
+    border-radius: 50%; 
+    filter: grayscale(100%); 
 }
 
-/* שכבת התוכן - נשארת למטה */
+/* שכבת התוכן - מיקום, צבע, וגודל הטקסט */
 .project-info {
     position: absolute;
-    bottom: 0;
+    bottom: 0; /* משיק לקשת התחתונה */
     width: 100%;
     background-color: rgba(0, 0, 0, 0.75); 
     color: white;
-    padding: 15px;
+    padding: 10px 5px 20px 5px; /* הגדלנו פאדינג תחתון */
     box-sizing: border-box;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    transition: all 0.4s ease; /* מעבר חלק לכל השינויים */
     z-index: 10; 
     text-align: center;
+    line-height: 1.1;
 }
 
 .project-info h3 {
-    margin-top: 0;
+    margin: 0;
     font-size: 1.2em;
+    font-weight: 700; /* מודגש יותר */
 }
 
-.project-info p {
-    font-size: 0.9em;
-}
-
-/* אפקט ה-Hover: חושף את הוידאו בצבע מלא */
+/* *** אפקט ה-Hover: העלמת הטקסט וחשיפת הוידאו בצבע מלא *** */
 .project-card:hover .project-video {
     opacity: 1; 
     filter: grayscale(0%); /* מבטל את השחור-לבן במעבר עכבר */
 }
 
 .project-card:hover .project-info {
-    background-color: rgba(0, 0, 0, 0.0); 
-    color: #333;
+    opacity: 0; /* הופך את הטקסט לשקוף לחלוטין (העלמה) */
+    transform: translateY(100%); /* מוריד את הטקסט למטה כדי שלא יפריע */
+    background-color: rgba(0, 0, 0, 0.0); /* מוריד את הצבע של השכבה */
 }
