@@ -80,8 +80,8 @@ h1 {
     border-radius: 50%;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     
-    /* קריטי: מעבר חלק על כל המאפיינים למשך 0.5 שניות */
-    transition: all 0.5s ease-in-out;
+    /* מעבר ארוך יותר (1.5 שניות) עבור מצב Scary */
+    transition: all 1.5s ease-in-out; 
     
     background-color: #fff;
     display: flex;
@@ -181,13 +181,12 @@ h1 {
     display: none !important;
 }
 
-/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל */
+/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל (מוקטן ל-80px) */
 .follower {
     position: fixed;
     pointer-events: none;
     z-index: 10000;
     transition: transform 0.1s ease-out;
-    /* שינוי קריטי: הקטנת הרוחב מ-240px ל-80px */
     width: 80px;
     height: auto;
     opacity: 0;
