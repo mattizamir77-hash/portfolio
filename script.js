@@ -2,15 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. הגדרות בסיס
     const mainCard = document.getElementById('mainProjectCard');
     const mainVideo = mainCard ? mainCard.querySelector('.project-video') : null;
-    const regularModeButton = document.getElementById('regularMode');
-    const scaryModeButton = document.getElementById('scaryMode');
-    const cuteModeButton = document.getElementById('cuteMode');
     const body = document.body;
     const followerImage = document.getElementById('followerImage');
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
     const fishContainer = document.getElementById('fishContainer'); 
-    const fishCounterDisplay = document.getElementById('fishCounterDisplay'); // <-- המונה בתוך העיגול
+    const fishCounterDisplay = document.getElementById('fishCounterDisplay'); 
+
+    // הגדרת כפתורים ולוודא שהם קיימים לפני הוספת אירועים
+    const regularModeButton = document.getElementById('regularMode');
+    const scaryModeButton = document.getElementById('scaryMode');
+    const cuteModeButton = document.getElementById('cuteMode');
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearvideo.mp4'; 
@@ -34,9 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let fishCounterValue = FISH_COUNT; 
     let currentFollowerScale = 1.0; 
     
-    // מנגנון הגנה
+    // מנגנון הגנה: בדיקה מינימלית לפני התחלת הלוגיקה
     if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !fishCounterDisplay) {
-        console.error("Initialization failed: Required HTML elements not found.");
+        console.error("Initialization failed: Missing critical HTML elements.");
         return;
     }
 
@@ -44,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCounterDisplay() {
         if (currentMode === 'cute') {
             fishCounterDisplay.textContent = `${fishCounterValue}`;
-            fishCounterDisplay.classList.add('active'); // מציג את המונה
+            fishCounterDisplay.classList.add('active'); 
         } else {
-            fishCounterDisplay.classList.remove('active'); // מסתיר את המונה
+            fishCounterDisplay.classList.remove('active'); 
         }
     }
 
@@ -123,23 +125,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // 4. פונקציית התחלת אינטראקציה (Hover/Click)
+    // 4. פונקציית התחלת אינטראקציה (Hover/Click) - התיקון העיקרי ל-CUTE
     function startVideoAndTimer() {
         if (mainVideo && !followerImage.classList.contains('active')) {
             
-            // FIX REGULAR MODE: נפעיל תמיד אם הוא לא מנגן כבר
-            if (currentMode === 'regular' && !currentVideoPlaying) { 
+            // FIX REGULAR MODE: נפעיל תמיד אם מושהה
+            if (currentMode === 'regular' && mainVideo.paused) { // <-- שינוי: חוזר ל-paused check אבל בודק גם אם הוידאו לא מוכן
                  mainVideo.play();
                  currentVideoPlaying = true;
-                 return;
-            } else if (currentMode === 'regular') {
-                return; // אם רגיל וכבר מנגן
+            } else if (currentMode === 'regular' && currentVideoPlaying) {
+                 return; // אם רגיל וכבר מנגן
             }
             
             // לוגיקת מצבים מפחיד/חמוד
             if (currentMode !== 'regular') {
                 mainVideo.play();
                 currentVideoPlaying = true;
+            } else if (currentMode === 'regular') {
+                return; // אם רגיל וכבר מנגן
             }
             
             // לוגיקת טיימרים
@@ -160,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
+    
     // 5. לוגיקת עקיבת עכבר (MouseMove)
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
@@ -271,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEffectActive = followerImage.classList.contains('active') || mainCard.classList.contains('fullscreen-video');
 
         if (isEffectActive || currentVideoPlaying) { 
-            switchMode(currentMode); 
+            switchMode('regular'); // איפוס מלא לרגיל
         } else {
             startVideoAndTimer();
         }
