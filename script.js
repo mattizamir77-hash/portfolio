@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. הגדרות בסיס
+    // 1. הגדרות בסיס וקבועים
     const mainCard = document.getElementById('mainProjectCard');
     const mainVideo = mainCard ? mainCard.querySelector('.project-video') : null;
     const regularModeButton = document.getElementById('regularMode');
@@ -13,16 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const doneMessage = document.getElementById('doneMessage');
     const scaryRoarSound = document.getElementById('scaryRoarSound');
     const eatingSound = document.getElementById('eatingSound');
-    const magicSound = document.getElementById('magicSound'); // NEW: אלמנט סאונד קסם
+    const magicSound = document.getElementById('magicSound'); 
 
-    // הגדרת קבצי הוידאו
+    // הגדרת קבצי הוידאו והתמונות החדשות
     const REGULAR_VIDEO_SRC = 'bearregular.webm';
     const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
     
+    const REGULAR_BEAR_IMAGE = 'regular_bear.png'; // NEW
+    const SCARY_BEAR_IMAGE = 'scary_bear.png';     // NEW
+    
     const FULLSCREEN_DELAY_MS = 1500;
     const SCARY_END_HOLD_MS = 3000;
-    const CUTE_VIDEO_DURATION_MS = 5000;
+    const CUTE_VIDEO_DURATION_MS = 5000; 
     const NUMBER_OF_FISH = 10;
     const FOLLOWER_SIZE_INCREMENT = 35; 
     let currentFollowerSize = 80;
@@ -40,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // פונקציה שמבטיחה שהוידאו מוכן לניגון (Regular Mode Fix)
+    // פונקציה שמבטיחה שהוידאו מוכן לניגון
     mainVideo.onloadeddata = () => {
         if (currentMode === 'regular') {
             mainVideo.style.opacity = 1;
@@ -63,7 +66,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // בדיקת התנגשות (Collision Detection)
+    // הפעלת מצב ה-Follower (חדש: מאחד את הלוגיקה של Cute, Regular ו-Scary)
+    function activateFollowerGame(imageSrc) {
+        // 1. נקיון
+        mainVideo.pause();
+        mainVideo.style.opacity = 0;
+        mainCard.style.pointerEvents = 'none';
+        
+        // 2. הפעלת Follower
+        followerImage.src = imageSrc; // החלפת תמונת ה-Follower
+        followerImage.classList.add('active');
+        body.classList.add('hide-cursor');
+        
+        // 3. התחלת משחק
+        createCollectibleFish();
+    }
+
+    // בדיקת התנגשות (לוגיקה קיימת)
     function checkCollision() {
         if (!followerImage.classList.contains('active')) return;
         
@@ -81,27 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (isColliding) {
-                // 1. הגדלת ה-Follower
                 currentFollowerSize += FOLLOWER_SIZE_INCREMENT; 
                 body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
 
-                // 2. הפעלת סאונד אכילה 
                 eatingSound.currentTime = 0; 
                 eatingSound.play().catch(e => console.log("Eating sound playback blocked:", e));
 
-                // 3. העלמת הדג
                 fish.classList.add('collected');
                 collectedFishCount++;
-                console.log(`Fish collected! Follower size is now: ${currentFollowerSize}px. Collected: ${collectedFishCount}/${NUMBER_OF_FISH}`);
-
-                // 4. בדיקה אם כל הדגים נאספו
+                
                 if (collectedFishCount === NUMBER_OF_FISH) {
                     doneMessage.classList.add('active');
                 }
             }
         });
     }
-
 
     // 2. פונקציית מעבר מצבים (איפוס וטעינה מחדש)
     function switchMode(mode) {
@@ -114,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
         scaryRoarSound.currentTime = 0; 
         eatingSound.pause(); 
         eatingSound.currentTime = 0; 
-        magicSound.pause(); // NEW
-        magicSound.currentTime = 0; // NEW
+        magicSound.pause(); 
+        magicSound.currentTime = 0; 
         
         // עצירה ואיפוס וידאו
         if (mainVideo) {
@@ -126,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mainCard.style.pointerEvents = 'auto';
         currentVideoPlaying = false;
         
-        // איפוס גודל הדב ודגים
+        // איפוס גודל הדב, דגים, ומסך סיום אימה (NEW: איפוס מסך סיום אימה)
         currentFollowerSize = 80;
         body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
         if (fishContainer) fishContainer.innerHTML = '';
@@ -139,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.remove('hide-cursor');
         followerImage.classList.remove('active');
         scaryEndScreen.classList.remove('active');
-        scaryEndScreen.style.backgroundImage = 'none';
+        scaryEndScreen.style.backgroundImage = 'none'; // NEW
         
         // עדכון כפתורי הסקאלה
         document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
@@ -163,23 +176,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mainVideo) mainVideo.load();
     }
 
-    // 3. לוגיקת סיום למצב מפחיד (לוגיקה קיימת)
+    // 3. לוגיקת סיום למצב מפחיד ולמצב רגיל (NEW: לוגיקת סיום אוניברסלית)
     mainVideo.onended = () => {
         if (currentMode === 'scary') {
-            mainVideo.pause();
+             // NEW: הפעלת משחק ה-Follower במקום מסך הסיום הקודם
+            activateFollowerGame(SCARY_BEAR_IMAGE);
+            body.classList.remove('scary-mode'); // יציאה ממצב מסך מלא
             
-            const canvas = document.createElement('canvas');
-            canvas.width = mainVideo.videoWidth;
-            canvas.height = mainVideo.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(mainVideo, 0, 0, canvas.width, canvas.height);
-            const imageUrl = canvas.toDataURL('image/png');
-            scaryEndScreen.style.backgroundImage = `url(${imageUrl})`;
-            
-            scaryEndTimeout = setTimeout(() => {
-                scaryEndScreen.classList.add('active');
-            }, SCARY_END_HOLD_MS);
+        } else if (currentMode === 'regular') {
+            // NEW: הפעלת משחק ה-Follower
+            activateFollowerGame(REGULAR_BEAR_IMAGE);
+        
+        } else if (currentMode === 'cute') {
+            // במצב Cute, ה-activateFollowerGame מופעל כבר מהטיימר ב-startVideoAndTimer
+            // אין צורך לעשות כאן כלום, כי הלוגיקה כבר מטופלת בטיימר.
+            // הדבר היחיד שצריך לוודא הוא שהטיימר אכן סיים.
         }
+        currentVideoPlaying = false; // עדכון מצב הוידאו
     };
     
     // 4. פונקציית התחלת אינטראקציה (Hover/Click)
@@ -189,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentVideoPlaying = true;
             
             if (currentMode === 'scary') {
-                // מעבר למסך מלא אחרי 1.5 שניות
+                // מעבר למסך מלא אחרי 1.5 שניות (יישאר עד שהווידאו יסתיים)
                 fullscreenTimeout = setTimeout(() => {
                     mainCard.classList.add('fullscreen-video');
                     body.classList.add('scary-mode');
@@ -199,23 +212,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 scaryRoarSound.play().catch(e => console.log("Sound playback blocked:", e));
 
             } else if (currentMode === 'cute') {
-                // NEW: הפעלת צליל קסם מיד בכניסה למצב Cute
+                // הפעלת צליל קסם מיד בכניסה למצב Cute
                 magicSound.play().catch(e => console.log("Magic sound playback blocked:", e));
                 
+                // במצב Cute, משחק ה-Follower מופעל אחרי טיימר קבוע (5 שניות)
                 cuteVideoTimeout = setTimeout(() => {
-                    mainVideo.pause();
-                    mainVideo.style.opacity = 0;
-                    mainCard.style.pointerEvents = 'none';
-                    followerImage.classList.add('active');
-                    body.classList.add('hide-cursor');
-                    
-                    createCollectibleFish();
+                    // כאשר הטיימר מסתיים, הפעלת משחק ה-Follower (עם תמונה של ה-Follower המקורית)
+                    activateFollowerGame('follower_image.png');
+                    // ה-onended של הוידאו של cute כבר לא רלוונטי בגלל שהפעלנו pause כאן
                 }, CUTE_VIDEO_DURATION_MS);
             }
         }
     }
     
-    // 5. לוגיקת עקיבת עכבר (לוגיקה קיימת)
+    // 5. לוגיקת עקיבת עכבר (MouseMove)
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
             const mouseX = event.clientX;
@@ -224,9 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
             followerImage.style.left = `${mouseX}px`;
             followerImage.style.top = `${mouseY}px`;
             
-            if (currentMode === 'cute') {
-                checkCollision();
-            }
+            // בדיקת התנגשות מתבצעת בכל המצבים שהפעלנו את משחק ה-Follower
+            checkCollision();
         }
     });
 
