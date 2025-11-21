@@ -1,4 +1,4 @@
-/* Vibe Coding CSS: עיצוב נקי וסופי - גרסה יציבה 3 מצבים */
+/* Vibe Coding CSS: עיצוב נקי וסופי (תוקן גודל הדגים) */
 body {
     background-color: #f4f7f6;
     font-family: 'Montserrat', sans-serif; 
@@ -15,6 +15,10 @@ body {
 
 body.scary-mode {
     overflow: hidden; 
+}
+
+body.hide-cursor {
+    cursor: none;
 }
 
 header {
@@ -86,7 +90,7 @@ h1 {
     transform: translateY(-5px); 
 }
 
-/* מצב FULL SCREEN אימה */
+/* מצב FULL SCREEN אימה - תיקון נקודת מרכז */
 .project-card.fullscreen-video {
     position: fixed !important; 
     top: 50% !important;
@@ -167,6 +171,22 @@ h1 {
     display: none !important;
 }
 
+/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל */
+.follower {
+    position: fixed; 
+    pointer-events: none; 
+    z-index: 10000; 
+    transition: transform 0.1s ease-out; 
+    width: 240px; 
+    height: auto;
+    opacity: 0; 
+    transform: translate(-50%, -50%); 
+}
+
+.follower.active {
+    opacity: 1; 
+}
+
 /* מסך סוף האימה (כפתור החזרה) */
 .scary-end-screen {
     position: fixed;
@@ -197,4 +217,41 @@ h1 {
     cursor: pointer;
     font-size: 1.2em;
     font-weight: 700;
+}
+
+/* *** פיצ'ר הדגים *** */
+#fishContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; 
+    z-index: 500; 
+}
+
+.fish {
+    position: absolute;
+    width: 45px; /* <--- תוקן: גודל הדגים הוגדל */
+    height: auto;
+    cursor: pointer; 
+    user-select: none; 
+    transition: transform 0.1s ease-out, opacity 0.5s ease-in-out; 
+    opacity: 0; 
+    animation: fadeInScale 0.5s forwards ease-out; 
+}
+
+.fish.hit {
+    opacity: 0.8; 
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
