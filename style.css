@@ -1,4 +1,4 @@
-/* Vibe Coding CSS: עיצוב נקי ומודרני */
+/* Vibe Coding CSS: עיצוב נקי ומודרני (גרסה עגולה) */
 body {
     background-color: #f4f7f6;
     font-family: 'Arial', sans-serif;
@@ -39,7 +39,7 @@ h1 {
     margin-top: 150px; /* רווח מהכותרת */
 }
 
-/* כרטיס הפרויקט (המיכל הראשי) - עכשיו עיגול! */
+/* כרטיס הפרויקט (עיגול!) */
 .project-card {
     position: relative;
     overflow: hidden; 
@@ -50,7 +50,7 @@ h1 {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     transition: transform 0.3s ease;
     background-color: #fff; /* רקע לבן כברירת מחדל */
-    display: flex; /* כדי למרכז את התוכן */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -69,10 +69,10 @@ h1 {
     object-fit: cover; /* ימלא את העיגול מבלי לעוות */
     opacity: 0; /* מוסתר בהתחלה */
     transition: opacity 0.4s ease; 
-    border-radius: 50%; /* חשוב: גם הוידאו יהיה עגול */
+    border-radius: 50%; /* הוידאו הופך עגול */
 }
 
-/* שכבת התוכן - יושבת מעל הוידאו */
+/* שכבת התוכן - נשארת למטה */
 .project-info {
     position: absolute;
     bottom: 0;
@@ -82,9 +82,9 @@ h1 {
     color: white;
     padding: 15px;
     box-sizing: border-box;
-    transition: background-color 0.4s ease;
+    transition: background-color 0.4s ease, color 0.4s ease; /* הוספת טרנזישן לצבע */
     z-index: 10; 
-    text-align: center; /* מרכוז טקסט */
+    text-align: center;
 }
 
 .project-info h3 {
@@ -96,13 +96,14 @@ h1 {
     font-size: 0.9em;
 }
 
-/* *** אפקט ה-Hover: מופיע הוידאו ושכבת הטקסט נהיית שקופה יותר *** */
+/* *** אפקט ה-Hover: חושף את הוידאו *** */
 .project-card:hover .project-video {
     opacity: 1; 
 }
 
 .project-card:hover .project-info {
-    /* הופך את השכבה לשקופה לחלוטין במעבר עכבר (כדי לראות את הוידאו) */
+    /* הופך את השכבה לשקופה לחלוטין במעבר עכבר */
     background-color: rgba(0, 0, 0, 0.0); 
-    color: transparent; /* הופך את הטקסט לשקוף */
+    /* חשוב: שינוי צבע הטקסט לשחור כדי שיהיה קריא על רקע וידאו בהיר */
+    color: #333; 
 }
