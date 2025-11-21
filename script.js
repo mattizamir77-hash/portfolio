@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let fullscreenTimeout = null;
     let currentMode = 'regular'; // מצב ברירת מחדל
-
+    
+    // מנגנון הגנה: אם אחד הרכיבים לא נמצא
     if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton) {
-        // מנגנון הגנה: אם אחד הרכיבים לא נמצא
-        console.error("One or more required elements were not found in the HTML.");
+        console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
 
@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
         regularModeButton.classList.remove('active');
         scaryModeButton.classList.remove('active');
         
+        // עצירה ואיפוס וידאו
+        mainVideo.pause();
+        mainVideo.currentTime = 0;
+        
         if (mode === 'scary') {
             currentMode = 'scary';
             scaryModeButton.classList.add('active');
@@ -40,16 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // החלפת סורס הוידאו לסרטון המפחיד
             mainVideo.src = SCARY_VIDEO_SRC;
             mainVideo.load();
-            mainVideo.pause(); // מוודאים שהוא מוכן
-            
-            // הגדרת טיימר לפריצת המסך
-            fullscreenTimeout = setTimeout(() => {
-                // רק אם הוידאו פועל במצב מפחיד, הוא יכול להתפרס
-                if (mainVideo.paused === false && currentMode === 'scary') {
-                    mainCard.classList.add('fullscreen-video');
-                    body.classList.add('scary-mode');
-                }
-            }, FULLSCREEN_DELAY_MS); 
             
         } else { // מצב רגיל
             currentMode = 'regular';
@@ -58,35 +52,52 @@ document.addEventListener('DOMContentLoaded', () => {
             // החלפת סורס הוידאו לסרטון הרגיל
             mainVideo.src = REGULAR_VIDEO_SRC;
             mainVideo.load();
-            mainVideo.pause(); // מוודאים שהוא מוכן
         }
     }
     
-    // הפעלת מצב רגיל כברירת מחדל
-    switchMode('regular');
-
-    // 3. לוגיקת Hover להפעלה/עצירה של הוידאו
-    mainCard.addEventListener('mouseenter', () => {
-        // אם הוידאו לא פועל, הפעל אותו
+    // 3. לוגיקת Hover ו-Click להפעלה/עצירה של הוידאו
+    function startVideoAndTimer() {
         if (mainVideo.paused) {
             mainVideo.play();
+            
+            if (currentMode === 'scary') {
+                // הגדרת טיימר לפריצת המסך רק במצב מפחיד
+                fullscreenTimeout = setTimeout(() => {
+                    mainCard.classList.add('fullscreen-video');
+                    body.classList.add('scary-mode');
+                }, FULLSCREEN_DELAY_MS); 
+            }
+        }
+    }
+
+    function stopVideoAndReset() {
+        mainVideo.pause();
+        mainVideo.currentTime = 0;
+        
+        // ביטול טיימר ואיפוס פול סקרין
+        clearTimeout(fullscreenTimeout);
+        mainCard.classList.remove('fullscreen-video');
+        body.classList.remove('scary-mode');
+    }
+    
+    // אירועי Hover
+    mainCard.addEventListener('mouseenter', startVideoAndTimer);
+    mainCard.addEventListener('mouseleave', stopVideoAndReset);
+    
+    // אירוע Click (למקרה שה-Hover נחסם)
+    mainCard.addEventListener('click', () => {
+        if (mainVideo.paused) {
+            startVideoAndTimer();
+        } else {
+            stopVideoAndReset();
         }
     });
 
-    mainCard.addEventListener('mouseleave', () => {
-        // תמיד עצור את הוידאו ביציאה
-        mainVideo.pause();
-        mainVideo.currentTime = 0; // אחזר להתחלה
-        
-        // ביציאה, אם היינו במצב מפחיד, בטל את הפול סקרין
-        if (currentMode === 'scary') {
-            clearTimeout(fullscreenTimeout);
-            mainCard.classList.remove('fullscreen-video');
-            body.classList.remove('scary-mode');
-        }
-    });
 
     // 4. לוגיקת כפתורים
     regularModeButton.addEventListener('click', () => switchMode('regular'));
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
+    
+    // הפעלת מצב רגיל כברירת מחדל
+    switchMode('regular');
 });
