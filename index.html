@@ -10,20 +10,12 @@
 <body>
     <header>
         <h1>Interactive Portfolio</h1>
-        
-        <div class="mode-toggle">
-            <button id="regularMode" class="active">Regular</button>
-            <button id="scaryMode">Scary</button>
-            <button id="cuteMode">Cute</button>
-        </div>
-    </header>
+        </header>
 
     <main class="portfolio-grid">
         <div class="project-card" id="mainProjectCard">
             <video class="project-video" muted loop preload="auto" poster="bearimage.png">
-                <source id="regularSrc" src="bearvideo.mp4" type="video/mp4"> 
-                <source id="scarySrc" src="scaryvideo.webm" type="video/webm">
-                <source id="cuteSrc" src="cutemagicvideo.mp4" type="video/mp4">
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
             </video>
             
             <div class="project-info">
@@ -37,15 +29,8 @@
                 </svg>
             </div>
 
-            <div id="fishCounterDisplay" class="counter"></div>
-        </div>
+            </div>
     </main>
-
-    <div id="scaryEndScreen" class="scary-end-screen">
-        <button id="resetButton">Restart</button>
-    </div>
-    
-    <img src="follower_image.png" id="followerImage" class="follower" alt="Mouse Follower"> 
 
     <script src="script.js"></script> 
 </body>
