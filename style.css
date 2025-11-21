@@ -37,6 +37,24 @@ h1 {
     margin: 0;
 }
 
+/* עיצוב המונה בתוך העיגול */
+.counter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3em; /* גודל גדול */
+    font-weight: 700;
+    color: #1a73e8; /* כחול של הכותרת */
+    z-index: 15;
+    opacity: 0; /* מוסתר כברירת מחדל */
+    transition: opacity 0.3s ease;
+}
+
+.counter.active {
+    opacity: 1;
+}
+
 .mode-toggle {
     margin: 10px auto;
     display: flex;
@@ -69,26 +87,6 @@ h1 {
     padding: 50px 20px;
     margin-top: 150px;
 }
-
-/* עיצוב המונה בתוך העיגול */
-.counter {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3em; /* גודל גדול */
-    font-weight: 700;
-    color: #1a73e8; /* כחול של הכותרת */
-    z-index: 15;
-    opacity: 0; /* מוסתר כברירת מחדל */
-    transition: opacity 0.3s ease;
-}
-
-/* הצגת המונה במצב cute */
-.counter.active {
-    opacity: 1;
-}
-
 
 /* כרטיס הפרויקט (עיגול!) */
 .project-card {
