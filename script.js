@@ -2,17 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. הגדרות בסיס
     const mainCard = document.getElementById('mainProjectCard');
     const mainVideo = mainCard ? mainCard.querySelector('.project-video') : null;
+    const regularModeButton = document.getElementById('regularMode');
+    const scaryModeButton = document.getElementById('scaryMode');
+    const cuteModeButton = document.getElementById('cuteMode');
     const body = document.body;
     const followerImage = document.getElementById('followerImage');
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
     const fishContainer = document.getElementById('fishContainer'); 
     const fishCounterDisplay = document.getElementById('fishCounterDisplay'); 
-
-    // הגדרת כפתורים ולוודא שהם קיימים לפני הוספת אירועים
-    const regularModeButton = document.getElementById('regularMode');
-    const scaryModeButton = document.getElementById('scaryMode');
-    const cuteModeButton = document.getElementById('cuteMode');
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearvideo.mp4'; 
@@ -36,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let fishCounterValue = FISH_COUNT; 
     let currentFollowerScale = 1.0; 
     
-    // מנגנון הגנה: בדיקה מינימלית לפני התחלת הלוגיקה
+    // מנגנון הגנה
     if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !fishCounterDisplay) {
         console.error("Initialization failed: Missing critical HTML elements.");
         return;
@@ -129,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function startVideoAndTimer() {
         if (mainVideo && !followerImage.classList.contains('active')) {
             
-            // FIX REGULAR MODE: נפעיל תמיד אם מושהה
-            if (currentMode === 'regular' && mainVideo.paused) { // <-- שינוי: חוזר ל-paused check אבל בודק גם אם הוידאו לא מוכן
+            // FIX REGULAR MODE: נפעיל תמיד אם מושהה (הסיר את currentVideoPlaying לבדיקת רגיל)
+            if (currentMode === 'regular' && mainVideo.paused) { 
                  mainVideo.play();
                  currentVideoPlaying = true;
             } else if (currentMode === 'regular' && currentVideoPlaying) {
