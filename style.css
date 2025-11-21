@@ -6,11 +6,11 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    display: flex; /* למיקום מרכזי */
+    display: flex; 
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh; /* מתיחה לגובה המסך המלא */
+    min-height: 100vh;
 }
 
 header {
@@ -18,8 +18,8 @@ header {
     padding: 40px 20px 20px;
     background-color: #ffffff;
     border-bottom: 2px solid #e0e0e0;
-    width: 100%; /* למתיחה מלאה */
-    position: fixed; /* כדי שהכותרת לא תזוז */
+    width: 100%; 
+    position: fixed; 
     top: 0;
     z-index: 20;
 }
@@ -36,20 +36,20 @@ h1 {
     flex-wrap: wrap;
     gap: 30px;
     padding: 50px 20px;
-    margin-top: 150px; /* רווח מהכותרת */
+    margin-top: 150px;
 }
 
 /* כרטיס הפרויקט (עיגול!) */
 .project-card {
     position: relative;
     overflow: hidden; 
-    width: 300px; /* רוחב העיגול */
-    height: 300px; /* גובה העיגול - חייב להיות שווה לרוחב! */
+    width: 300px;
+    height: 300px; 
     cursor: pointer;
     border-radius: 50%; /* הופך את הצורה לעיגול! */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
     transition: transform 0.3s ease;
-    background-color: #fff; /* רקע לבן כברירת מחדל */
+    background-color: #fff; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,8 +66,8 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* ימלא את העיגול מבלי לעוות */
-    opacity: 0; /* מוסתר בהתחלה */
+    object-fit: cover; 
+    opacity: 0; 
     transition: opacity 0.4s ease; 
     border-radius: 50%; /* הוידאו הופך עגול */
 }
@@ -77,12 +77,11 @@ h1 {
     position: absolute;
     bottom: 0;
     width: 100%;
-    /* רקע שחור יותר אטום כדי להבליט טקסט על סרטון בהיר */
     background-color: rgba(0, 0, 0, 0.75); 
     color: white;
     padding: 15px;
     box-sizing: border-box;
-    transition: background-color 0.4s ease, color 0.4s ease; /* הוספת טרנזישן לצבע */
+    transition: background-color 0.4s ease, color 0.4s ease;
     z-index: 10; 
     text-align: center;
 }
@@ -96,14 +95,12 @@ h1 {
     font-size: 0.9em;
 }
 
-/* *** אפקט ה-Hover: חושף את הוידאו *** */
+/* אפקט ה-Hover: חושף את הוידאו */
 .project-card:hover .project-video {
     opacity: 1; 
 }
 
 .project-card:hover .project-info {
-    /* הופך את השכבה לשקופה לחלוטין במעבר עכבר */
     background-color: rgba(0, 0, 0, 0.0); 
-    /* חשוב: שינוי צבע הטקסט לשחור כדי שיהיה קריא על רקע וידאו בהיר */
-    color: #333; 
+    color: #333;
 }
