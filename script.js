@@ -9,24 +9,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const followerImage = document.getElementById('followerImage');
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
+    const fishContainer = document.getElementById('fishContainer'); // קונטיינר הדגים
 
     // הגדרת קבצי הוידאו
-    const REGULAR_VIDEO_SRC = 'bearregular.webm'; // <-- עודכן ל-webm
+    const REGULAR_VIDEO_SRC = 'bearregular.webm';
     const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
-    
-    const FULLSCREEN_DELAY_MS = 1500; // קיצרנו מעבר חלק יותר
+    const FISH_IMAGE_SRC = 'fish.png'; // קובץ הדג
+
+    const FULLSCREEN_DELAY_MS = 1500; 
     const SCARY_END_HOLD_MS = 3000; 
     const CUTE_VIDEO_DURATION_MS = 5000; 
-
+    const FISH_COUNT = 10; // מספר הדגים
+    const FISH_GROW_PERCENT = 0.05; // 5% גדילה במגע
+    
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
     let scaryEndTimeout = null; 
     let currentMode = 'regular'; 
     let currentVideoPlaying = false; 
-    
+
+    // משתנים לפיצ'ר הדגים
+    let fishElements = []; // מערך שיכיל את כל אלמנטי הדגים
+    let touchedFishCount = 0; // מונה דגים שנגעו בהם
+
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
@@ -34,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // פונקציה שמבטיחה שהוידאו מוכן לניגון (Regular Mode Fix)
     mainVideo.onloadeddata = () => {
         if (currentMode === 'regular') {
-            mainVideo.style.opacity = 1; // מוודא שהתמונה הלבנה מופיעה (אם יש פוסטר)
+            mainVideo.style.opacity = 1; 
         }
     };
 
@@ -61,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         scaryEndScreen.classList.remove('active'); 
         scaryEndScreen.style.backgroundImage = 'none'; 
         
+        // איפוס הדגים
+        clearFishGame();
+
         // עדכון כפתורי הסקאלה
         document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
         
@@ -74,6 +85,15 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'cute':
                 cuteModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = CUTE_MAGIC_VIDEO_SRC;
+                // הפעלת משחק הדגים לאחר שהוידאו החמוד נגמר
+                cuteVideoTimeout = setTimeout(() => {
+                    mainVideo.pause(); 
+                    mainVideo.style.opacity = 0; 
+                    mainCard.style.pointerEvents = 'none'; 
+                    followerImage.classList.add('active'); 
+                    body.classList.add('hide-cursor'); 
+                    initFishGame(); // <--- קריטי: מתחיל את משחק הדגים
+                }, CUTE_VIDEO_DURATION_MS);
                 break;
             default: // 'regular'
                 regularModeButton.classList.add('active');
@@ -115,13 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     body.classList.add('scary-mode');
                 }, FULLSCREEN_DELAY_MS); 
             } else if (currentMode === 'cute') {
-                cuteVideoTimeout = setTimeout(() => {
-                    mainVideo.pause(); 
-                    mainVideo.style.opacity = 0; 
-                    mainCard.style.pointerEvents = 'none'; 
-                    followerImage.classList.add('active'); 
-                    body.classList.add('hide-cursor'); 
-                }, CUTE_VIDEO_DURATION_MS);
+                // במצב חמוד, הוידאו ינגן, ואז יופעל משחק הדגים
+                // הלוגיקה של משחק הדגים תופעל ע"י ה-setTimeout ב-switchMode
             }
         }
     }
@@ -131,9 +146,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (followerImage.classList.contains('active')) {
             const mouseX = event.clientX;
             const mouseY = event.clientY;
-            // ה-CSS מטפל בקיזוז למרכז (-50%) - כאן אנו רק מעבירים אותו ל-XY העכבר
+            // ה-CSS מטפל בקיזוז למרכז (-50%)
             followerImage.style.left = `${mouseX}px`; 
             followerImage.style.top = `${mouseY}px`;
+
+            // בדיקת מגע עם דגים רק במצב Cute
+            if (currentMode === 'cute') {
+                checkFishCollision();
+            }
         }
     });
 
@@ -151,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEffectActive = followerImage.classList.contains('active') || mainCard.classList.contains('fullscreen-video');
 
         if (isEffectActive || currentVideoPlaying) { 
-            switchMode(currentMode); 
+            switchMode(currentMode); // איפוס מלא
         } else {
             startVideoAndTimer();
         }
@@ -162,6 +182,88 @@ document.addEventListener('DOMContentLoaded', () => {
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
     cuteModeButton.addEventListener('click', () => switchMode('cute')); 
     resetButton.addEventListener('click', () => switchMode('regular')); 
+
+    // *** פיצ'ר הדגים - פונקציות ***
+    function createFish() {
+        const fish = document.createElement('img');
+        fish.src = FISH_IMAGE_SRC;
+        fish.classList.add('fish');
+        fish.dataset.originalScale = 1; // שומר את הסקאלה המקורית
+        fish.dataset.hasBeenTouched = 'false'; // דגל האם נגעו בדג
+        
+        // מיקום אקראי על המסך
+        const x = Math.random() * (window.innerWidth - 100); // 100px רוחב מינימלי
+        const y = Math.random() * (window.innerHeight - 100); // 100px גובה מינימלי
+        fish.style.left = `${x}px`;
+        fish.style.top = `${y}px`;
+
+        // זווית אקראית
+        const rotation = Math.random() * 360;
+        fish.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; // ממקם מרכז ומסובב
+        
+        fishContainer.appendChild(fish);
+        fishElements.push(fish);
+    }
+
+    function initFishGame() {
+        clearFishGame(); // מנקה דגים קודמים
+        touchedFishCount = 0;
+        for (let i = 0; i < FISH_COUNT; i++) {
+            createFish();
+        }
+    }
+
+    function clearFishGame() {
+        fishElements.forEach(fish => fish.remove());
+        fishElements = [];
+        touchedFishCount = 0;
+    }
+
+    function checkFishCollision() {
+        if (!followerImage.classList.contains('active')) return; // רק אם הדב פעיל
+
+        // קבלת מיקום וגודל הדב (העוקב)
+        const followerRect = followerImage.getBoundingClientRect();
+
+        fishElements.forEach(fish => {
+            if (fish.dataset.hasBeenTouched === 'true') return; // אם כבר נגעו בו, דלג
+
+            const fishRect = fish.getBoundingClientRect();
+
+            // בדיקת התנגשות בין שני מלבנים
+            const collision = !(
+                followerRect.right < fishRect.left ||
+                followerRect.left > fishRect.right ||
+                followerRect.bottom < fishRect.top ||
+                followerRect.top > fishRect.bottom
+            );
+
+            if (collision) {
+                fish.dataset.hasBeenTouched = 'true';
+                touchedFishCount++;
+                
+                // הגדלת הדג ב-5%
+                let currentScale = parseFloat(fish.dataset.originalScale);
+                currentScale += FISH_GROW_PERCENT;
+                fish.dataset.originalScale = currentScale; // עדכן את הסקאלה המקורית
+                
+                // ודא שהטרנספורם שומר גם את הסיבוב
+                const currentTransform = fish.style.transform;
+                const rotateMatch = currentTransform.match(/rotate\(([^)]+)\)/);
+                const currentRotation = rotateMatch ? rotateMatch[1] : '0deg';
+                
+                fish.style.transform = `translate(-50%, -50%) scale(${currentScale}) rotate(${currentRotation})`;
+                
+                // בדיקה אם כל הדגים נגעו
+                if (touchedFishCount === FISH_COUNT) {
+                    setTimeout(() => {
+                        alert("You've caught all the fish! Resetting mode.");
+                        switchMode('regular'); // איפוס למצב רגיל
+                    }, 500); // השהייה קטנה לפני האיפוס
+                }
+            }
+        });
+    }
 
     // הפעלת מצב רגיל כברירת מחדל
     switchMode('regular');
