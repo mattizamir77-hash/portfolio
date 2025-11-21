@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
     const fishContainer = document.getElementById('collectibleFishContainer');
-    const doneMessage = document.getElementById('doneMessage'); // NEW
+    const doneMessage = document.getElementById('doneMessage');
+    const scaryRoarSound = document.getElementById('scaryRoarSound'); 
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearregular.webm';
@@ -18,21 +19,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
     
     const FULLSCREEN_DELAY_MS = 1500;
+    // const ROAR_DELAY_MS = 2000; // הוסר
     const SCARY_END_HOLD_MS = 3000;
     const CUTE_VIDEO_DURATION_MS = 5000;
     const NUMBER_OF_FISH = 10;
-    const FOLLOWER_SIZE_INCREMENT = 20; // NEW: הגדלה משמעותית יותר (היה 10)
+    const FOLLOWER_SIZE_INCREMENT = 20;
     let currentFollowerSize = 80;
-    let collectedFishCount = 0; // NEW: מונה לדגים שנאספו
+    let collectedFishCount = 0;
 
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
     let scaryEndTimeout = null;
+    // let roarTimeout = null; // הוסר
     let currentMode = 'regular';
     let currentVideoPlaying = false;
     
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !doneMessage) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !doneMessage || !scaryRoarSound) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
@@ -44,15 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // יצירת הדגים לאיסוף
+    // יצירת הדגים לאיסוף (לוגיקה קיימת)
     function createCollectibleFish() {
-        if (fishContainer) fishContainer.innerHTML = ''; // מנקה דגים קודמים
-        collectedFishCount = 0; // איפוס מונה
-        doneMessage.classList.remove('active'); // מסתיר הודעת DONE
+        if (fishContainer) fishContainer.innerHTML = '';
+        collectedFishCount = 0;
+        doneMessage.classList.remove('active');
         
         for (let i = 0; i < NUMBER_OF_FISH; i++) {
             const fish = document.createElement('img');
-            fish.src = 'fish.png'; // ודא שקובץ זה קיים בתיקייה
+            fish.src = 'fish.png';
             fish.classList.add('collectible-fish');
             fish.style.left = `${Math.random() * (window.innerWidth - 100) + 50}px`;
             fish.style.top = `${Math.random() * (window.innerHeight - 100) + 50}px`;
@@ -60,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // בדיקת התנגשות (Collision Detection)
+    // בדיקת התנגשות (לוגיקה קיימת)
     function checkCollision() {
         if (!followerImage.classList.contains('active')) return;
         
@@ -70,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fishes.forEach(fish => {
             const fishRect = fish.getBoundingClientRect();
 
-            // בדיקת התנגשות בין שני מלבנים
             const isColliding = !(
                 followerRect.right < fishRect.left ||
                 followerRect.left > fishRect.right ||
@@ -79,16 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (isColliding) {
-                // 1. הגדלת ה-Follower
                 currentFollowerSize += FOLLOWER_SIZE_INCREMENT;
                 body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
 
-                // 2. העלמת הדג
                 fish.classList.add('collected');
-                collectedFishCount++; // NEW: עדכון מונה הדגים שנאספו
+                collectedFishCount++;
                 console.log(`Fish collected! Follower size is now: ${currentFollowerSize}px. Collected: ${collectedFishCount}/${NUMBER_OF_FISH}`);
 
-                // NEW: בדיקה אם כל הדגים נאספו
                 if (collectedFishCount === NUMBER_OF_FISH) {
                     doneMessage.classList.add('active');
                 }
@@ -102,6 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(fullscreenTimeout);
         clearTimeout(cuteVideoTimeout);
         clearTimeout(scaryEndTimeout);
+        // clearTimeout(roarTimeout); // הוסר
+        
+        // עצירה ואיפוס סאונד
+        scaryRoarSound.pause(); 
+        scaryRoarSound.currentTime = 0; 
         
         // עצירה ואיפוס וידאו
         if (mainVideo) {
@@ -115,9 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // איפוס גודל הדב ודגים
         currentFollowerSize = 80;
         body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
-        if (fishContainer) fishContainer.innerHTML = ''; // מנקה את כל הדגים לאיסוף
-        collectedFishCount = 0; // NEW: איפוס מונה
-        doneMessage.classList.remove('active'); // NEW: מסתיר הודעת DONE
+        if (fishContainer) fishContainer.innerHTML = '';
+        collectedFishCount = 0;
+        doneMessage.classList.remove('active');
         
         // איפוס קלאסים ומסך סיום
         mainCard.classList.remove('fullscreen-video');
@@ -149,12 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mainVideo) mainVideo.load();
     }
 
-    // 3. לוגיקת סיום למצב מפחיד (פריים אחרון וכפתור)
+    // 3. לוגיקת סיום למצב מפחיד (לוגיקה קיימת)
     mainVideo.onended = () => {
         if (currentMode === 'scary') {
             mainVideo.pause();
             
-            // לקיחת הפריים האחרון
             const canvas = document.createElement('canvas');
             canvas.width = mainVideo.videoWidth;
             canvas.height = mainVideo.videoHeight;
@@ -176,10 +179,15 @@ document.addEventListener('DOMContentLoaded', () => {
             currentVideoPlaying = true;
             
             if (currentMode === 'scary') {
+                // מעבר למסך מלא אחרי 1.5 שניות
                 fullscreenTimeout = setTimeout(() => {
                     mainCard.classList.add('fullscreen-video');
                     body.classList.add('scary-mode');
                 }, FULLSCREEN_DELAY_MS);
+                
+                // הפעלת השאגה מיד (NEW)
+                scaryRoarSound.play().catch(e => console.log("Sound playback blocked:", e));
+
             } else if (currentMode === 'cute') {
                 cuteVideoTimeout = setTimeout(() => {
                     mainVideo.pause();
@@ -188,14 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     followerImage.classList.add('active');
                     body.classList.add('hide-cursor');
                     
-                    // יצירת הדגים רק לאחר שהוידאו הסתיים
                     createCollectibleFish();
                 }, CUTE_VIDEO_DURATION_MS);
             }
         }
     }
     
-    // 5. לוגיקת עקיבת עכבר (MouseMove) - תיקון למיקום מרכזי וזיהוי התנגשות
+    // 5. לוגיקת עקיבת עכבר (לוגיקה קיימת)
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
             const mouseX = event.clientX;
@@ -204,14 +211,13 @@ document.addEventListener('DOMContentLoaded', () => {
             followerImage.style.left = `${mouseX}px`;
             followerImage.style.top = `${mouseY}px`;
             
-            // בדיקת התנגשות כל פעם שהעכבר זז
             if (currentMode === 'cute') {
                 checkCollision();
             }
         }
     });
 
-    // 6. אירועי בקרת משתמש
+    // 6. אירועי בקרת משתמש (לוגיקה קיימת)
     mainCard.addEventListener('mouseenter', startVideoAndTimer);
     mainCard.addEventListener('mouseleave', () => {
         if (currentMode === 'regular' && currentVideoPlaying) {
@@ -231,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 7. לוגיקת כפתורים
+    // 7. לוגיקת כפתורים (לוגיקה קיימת)
     regularModeButton.addEventListener('click', () => switchMode('regular'));
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
     cuteModeButton.addEventListener('click', () => switchMode('cute'));
