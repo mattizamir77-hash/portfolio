@@ -10,19 +10,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearvideo.mp4';
-    const SCARY_VIDEO_SRC = 'scaryvideo.mp4';
+    const SCARY_VIDEO_SRC = 'scaryvideo.webm';
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
     
     const FULLSCREEN_DELAY_MS = 3000; // 3 שניות לאפקט המפחיד
-    const CUTE_VIDEO_DURATION_MS = 5000; // <-- שונה ל-5 שניות
+    const CUTE_VIDEO_DURATION_MS = 5000; // 5 שניות לווידאו החמוד
     
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
     let currentMode = 'regular'; 
     
-    // מנגנון הגנה: אם אחד הרכיבים לא נמצא
+    // מנגנון הגנה
     if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage) {
-        console.error("Initialization failed: One or more required HTML elements not found.");
+        console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
 
@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // עצירה ואיפוס וידאו
         mainVideo.pause();
         mainVideo.currentTime = 0;
-        mainVideo.style.opacity = 1; // מוודא שהוידאו גלוי כשחוזרים
-        mainCard.style.pointerEvents = 'auto'; // מחזיר אינטראקציה עם הכרטיס
+        mainVideo.style.opacity = 1; 
+        mainCard.style.pointerEvents = 'auto'; 
         
         // איפוס קלאסים
         mainCard.classList.remove('fullscreen-video');
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 3. פונקציית התחלת אינטראקציה
     function startVideoAndTimer() {
-        if (mainVideo.paused && !followerImage.classList.contains('active')) { // מוודא שהאינטראקציה לא כבר פעילה
+        if (mainVideo.paused && !followerImage.classList.contains('active')) {
             mainVideo.play();
             
             if (currentMode === 'scary') {
@@ -83,10 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (currentMode === 'cute') {
                 cuteVideoTimeout = setTimeout(() => {
                     mainVideo.pause(); 
-                    mainVideo.style.opacity = 0; // מעלים את הוידאו
-                    mainCard.style.pointerEvents = 'none'; // מונע אינטראקציה עם הכרטיס
-                    followerImage.classList.add('active'); // מציג את התמונה העוקבת
-                    body.classList.add('hide-cursor'); // מסתיר את סמן העכבר הרגיל
+                    mainVideo.style.opacity = 0; 
+                    mainCard.style.pointerEvents = 'none'; 
+                    followerImage.classList.add('active'); 
+                    body.classList.add('hide-cursor'); 
                 }, CUTE_VIDEO_DURATION_MS);
             }
         }
@@ -94,52 +94,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. פונקציית איפוס כללית (מופעלת רק בלחיצה)
     function stopVideoAndReset() {
-        // איפוס כל המצבים על ידי קריאה ל-switchMode במצב הנוכחי, ובכך לא מאתחל את הוידאו
         switchMode(currentMode);
     }
     
-    // 5. לוגיקת עקיבת עכבר עבור followerImage (אך רק כשהוא פעיל)
+    // 5. לוגיקת עקיבת עכבר עבור followerImage 
     document.addEventListener('mousemove', (event) => {
         if (followerImage.classList.contains('active')) {
             const mouseX = event.clientX;
             const mouseY = event.clientY;
-            // מזיזים את התמונה למרכז העכבר (בהנחה שרוחב התמונה 60px)
             followerImage.style.transform = `translate(${mouseX - 30}px, ${mouseY - 30}px)`; 
         }
     });
 
     // 6. אירועי בקרת משתמש
-
-    // Hover - רק מתחיל את האינטראקציה
     mainCard.addEventListener('mouseenter', startVideoAndTimer);
     
-    // Mouseleave - מוסר כליל! לא מאפס את האינטראקציה.
-
-    // Click - משמש גם להתחלה (במקום Hover) וגם לאיפוס
     mainCard.addEventListener('click', () => {
         const isEffectActive = followerImage.classList.contains('active') || mainCard.classList.contains('fullscreen-video');
 
         if (isEffectActive || !mainVideo.paused) {
-            // אם אפקט פעיל (עוקב/פולסקרין) או שהוידאו עדיין רץ, בצע איפוס
             stopVideoAndReset();
         } else {
-            // אם הוידאו מושהה ואין אפקט, התחל את האינטראקציה
             startVideoAndTimer();
         }
     });
 
-
     // 7. לוגיקת כפתורים
-    regularModeButton.addEventListener('click', () => stopVideoAndReset('regular'));
-    scaryModeButton.addEventListener('click', () => stopVideoAndReset('scary'));
-    cuteModeButton.addEventListener('click', () => stopVideoAndReset('cute')); 
-    
-    // מכיוון שפונקציית switchMode מטפלת באיפוס המלא, נשתמש בה ישירות בלחיצות על הכפתורים:
     regularModeButton.addEventListener('click', () => switchMode('regular'));
     scaryModeButton.addEventListener('click', () => switchMode('scary'));
     cuteModeButton.addEventListener('click', () => switchMode('cute')); 
-
-
+    
     // הפעלת מצב רגיל כברירת מחדל
     switchMode('regular');
 });
