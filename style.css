@@ -79,7 +79,8 @@ h1 {
     cursor: pointer;
     border-radius: 50%; 
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
-    transition: transform 0.3s ease;
+    /* נוסף: מעבר חלק ל-Fullscreen */
+    transition: transform 0.5s ease-in-out, border-radius 0.5s ease-in-out, width 0.5s ease-in-out, height 0.5s ease-in-out, top 0.5s ease-in-out, left 0.5s ease-in-out;
     background-color: #fff; 
     display: flex;
     align-items: center;
@@ -99,9 +100,10 @@ h1 {
     height: 100vh !important; 
     border-radius: 0 !important; 
     z-index: 1000 !important;
-    transition: all 0.5s ease-in-out !important; 
     overflow: hidden !important;
     transform: none !important; 
+    /* הרקע השחור יכסה את הכול אם הוידאו לא שקוף */
+    background-color: black; 
 }
 
 /* תיקון קריטי למניעת מריחה: הוידאו צריך למלא את המסך */
@@ -109,7 +111,7 @@ h1 {
     width: 100% !important; 
     height: 100% !important;
     border-radius: 0 !important; 
-    object-fit: cover !important; /* מוודא שלא נמרח */
+    object-fit: cover !important; 
 }
 
 /* אלמנט הוידאו / תמונת הפוסטר */
@@ -177,9 +179,13 @@ h1 {
     pointer-events: none; 
     z-index: 10000; 
     transition: transform 0.1s ease-out; 
-    width: 240px; /* <--- הוגדל פי 4 מ-60px */
+    width: 240px; 
     height: auto;
     opacity: 0; 
+    /* תיקון קריטי למיקום התמונה העוקבת */
+    left: 0; 
+    top: 0;
+    transform: translate(-50%, -50%); /* ממקם את מרכז התמונה על העכבר */
 }
 
 .follower.active {
@@ -193,7 +199,11 @@ h1 {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
+    /* מציג את הפריים האחרון של הוידאו כרקע */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.8); /* שכבת כהה מעל הפריים */
     z-index: 1001;
     display: none;
     align-items: center;
