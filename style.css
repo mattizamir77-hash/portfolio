@@ -1,7 +1,7 @@
 /* Vibe Coding CSS: עיצוב נקי ומודרני (גרסה עגולה עם תמונת פוסטר) */
 body {
     background-color: #f4f7f6;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Futura', 'Trebuchet MS', Arial, sans-serif; /* הפונט עודכן ל-Futura */
     color: #333;
     line-height: 1.6;
     margin: 0;
