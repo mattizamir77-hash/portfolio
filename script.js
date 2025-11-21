@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.getElementById('resetButton');
     const fishContainer = document.getElementById('collectibleFishContainer');
     const doneMessage = document.getElementById('doneMessage');
-    const scaryRoarSound = document.getElementById('scaryRoarSound'); 
+    const scaryRoarSound = document.getElementById('scaryRoarSound');
+    const eatingSound = document.getElementById('eatingSound'); // NEW: אלמנט סאונד אכילה
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearregular.webm';
@@ -19,23 +20,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const CUTE_MAGIC_VIDEO_SRC = 'cutemagicvideo.mp4';
     
     const FULLSCREEN_DELAY_MS = 1500;
-    // const ROAR_DELAY_MS = 2000; // הוסר
     const SCARY_END_HOLD_MS = 3000;
     const CUTE_VIDEO_DURATION_MS = 5000;
     const NUMBER_OF_FISH = 10;
-    const FOLLOWER_SIZE_INCREMENT = 20;
+    const FOLLOWER_SIZE_INCREMENT = 35; // NEW: הגדלה משמעותית יותר (היה 20)
     let currentFollowerSize = 80;
     let collectedFishCount = 0;
 
     let fullscreenTimeout = null;
     let cuteVideoTimeout = null;
     let scaryEndTimeout = null;
-    // let roarTimeout = null; // הוסר
     let currentMode = 'regular';
     let currentVideoPlaying = false;
     
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !doneMessage || !scaryRoarSound) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !doneMessage || !scaryRoarSound || !eatingSound) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // בדיקת התנגשות (לוגיקה קיימת)
+    // בדיקת התנגשות (Collision Detection)
     function checkCollision() {
         if (!followerImage.classList.contains('active')) return;
         
@@ -81,13 +80,20 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (isColliding) {
-                currentFollowerSize += FOLLOWER_SIZE_INCREMENT;
+                // 1. הגדלת ה-Follower
+                currentFollowerSize += FOLLOWER_SIZE_INCREMENT; // גדילה משמעותית
                 body.style.setProperty('--follower-size', `${currentFollowerSize}px`);
 
+                // 2. הפעלת סאונד אכילה (NEW)
+                eatingSound.currentTime = 0; // מאפס את הסאונד כדי שיוכל להתנגן מיד שוב
+                eatingSound.play().catch(e => console.log("Eating sound playback blocked:", e));
+
+                // 3. העלמת הדג
                 fish.classList.add('collected');
                 collectedFishCount++;
                 console.log(`Fish collected! Follower size is now: ${currentFollowerSize}px. Collected: ${collectedFishCount}/${NUMBER_OF_FISH}`);
 
+                // 4. בדיקה אם כל הדגים נאספו
                 if (collectedFishCount === NUMBER_OF_FISH) {
                     doneMessage.classList.add('active');
                 }
@@ -101,11 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(fullscreenTimeout);
         clearTimeout(cuteVideoTimeout);
         clearTimeout(scaryEndTimeout);
-        // clearTimeout(roarTimeout); // הוסר
         
         // עצירה ואיפוס סאונד
         scaryRoarSound.pause(); 
         scaryRoarSound.currentTime = 0; 
+        eatingSound.pause(); // NEW
+        eatingSound.currentTime = 0; // NEW
         
         // עצירה ואיפוס וידאו
         if (mainVideo) {
@@ -185,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     body.classList.add('scary-mode');
                 }, FULLSCREEN_DELAY_MS);
                 
-                // הפעלת השאגה מיד (NEW)
+                // הפעלת השאגה מיד
                 scaryRoarSound.play().catch(e => console.log("Sound playback blocked:", e));
 
             } else if (currentMode === 'cute') {
