@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scaryEndScreen = document.getElementById('scaryEndScreen');
     const resetButton = document.getElementById('resetButton');
     const fishContainer = document.getElementById('fishContainer'); 
+    const fishCounterDisplay = document.getElementById('fishCounterDisplay'); // אלמנט המונה
 
     // הגדרת קבצי הוידאו
     const REGULAR_VIDEO_SRC = 'bearvideo.mp4'; 
@@ -30,21 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentVideoPlaying = false; 
     
     let fishElements = []; 
-    let touchedFishCount = 0; 
+    let fishCounterValue = FISH_COUNT; // <-- ערך המונה
     let currentFollowerScale = 1.0; 
     
     // מנגנון הגנה
-    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer) {
+    if (!mainCard || !mainVideo || !regularModeButton || !scaryModeButton || !cuteModeButton || !followerImage || !scaryEndScreen || !resetButton || !fishContainer || !fishCounterDisplay) {
         console.error("Initialization failed: Required HTML elements not found.");
         return;
     }
 
-    // פונקציה שמבטיחה שהוידאו מוכן לניגון (Regular Mode Fix)
-    mainVideo.onloadeddata = () => {
-        if (currentMode === 'regular') {
-            mainVideo.style.opacity = 1; 
+    // פונקציה לעדכון המונה
+    function updateCounterDisplay() {
+        if (currentMode === 'cute') {
+            fishCounterDisplay.textContent = `Objects remaining: ${fishCounterValue}`;
+        } else {
+            fishCounterDisplay.textContent = ''; // מנקה את המונה במצבים אחרים
         }
-    };
+    }
 
     // 2. פונקציית מעבר מצבים (איפוס וטעינה מחדש)
     function switchMode(mode) {
@@ -69,13 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
         scaryEndScreen.classList.remove('active'); 
         scaryEndScreen.style.backgroundImage = 'none'; 
         
-        // איפוס הדב העוקב
+        // איפוס הדב העוקב והמונה
         followerImage.classList.remove('active'); 
         currentFollowerScale = 1.0; 
         followerImage.style.transform = `translate(-50%, -50%) scale(1.0)`; 
         
         clearFishGame(); // קריטי: ניקוי הדגים
-
+        fishCounterValue = FISH_COUNT; // <-- איפוס המונה
+        
         // עדכון כפתורי הסקאלה
         document.querySelectorAll('.mode-toggle button').forEach(btn => btn.classList.remove('active'));
         
@@ -89,15 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'cute':
                 cuteModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = CUTE_MAGIC_VIDEO_SRC;
-                
-                // המשחק יופעל כעת רק מתוך startVideoAndTimer
-                break; 
+                break;
             default: // 'regular'
                 regularModeButton.classList.add('active');
                 if (mainVideo) mainVideo.src = REGULAR_VIDEO_SRC;
                 break;
         }
         if (mainVideo) mainVideo.load(); // טוען את המקור החדש
+        updateCounterDisplay(); // <-- עדכון המונה
     }
 
     // 3. לוגיקת סיום למצב מפחיד (פריים אחרון וכפתור)
@@ -119,16 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // 4. פונקציית התחלת אינטראקציה (Hover/Click)
+    // 4. פונקציית התחלת אינטראקציה (Hover/Click) - התיקון העיקרי ל-CUTE
     function startVideoAndTimer() {
-        if (mainVideo && !followerImage.classList.contains('active')) { // <-- FIX: הוסר ה-mainVideo.paused
-            
-            // תנאי נוסף: אם זה רגיל, הפעל רק אם מושהה
+        if (mainVideo && !followerImage.classList.contains('active')) {
+            // FIX: הופך את הניגון במצב regular לאמין יותר
             if (currentMode === 'regular' && mainVideo.paused) {
                  mainVideo.play();
                  currentVideoPlaying = true;
             } else if (currentMode !== 'regular') {
-                // מצב מפחיד/חמוד - תמיד מנסים לנגן (כי זה מופעל רק פעם אחת)
                 mainVideo.play();
                 currentVideoPlaying = true;
             } else {
@@ -198,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < FISH_COUNT; i++) {
             createFish();
         }
+        updateCounterDisplay(); // מציג את 10 הדגים בהתחלה
     }
 
     function clearFishGame() {
@@ -224,7 +226,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (collision) {
                 touchedFishCount++;
-
+                fishCounterValue--; // <-- הורדת המונה
+                
                 // 1. הגדלה קריטית של הדב העוקב
                 currentFollowerScale += FOLLOWER_GROW_FACTOR;
                 followerImage.style.transform = `translate(-50%, -50%) scale(${currentFollowerScale})`;
@@ -233,6 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 fish.remove(); 
                 fishElements.splice(i, 1); 
 
+                updateCounterDisplay(); // <-- עדכון המונה
+                
                 // 3. בדיקה אם כל הדגים נגעו
                 if (touchedFishCount === FISH_COUNT) {
                     setTimeout(() => {
