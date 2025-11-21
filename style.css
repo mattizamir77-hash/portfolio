@@ -1,4 +1,4 @@
-/* Vibe Coding CSS: עיצוב נקי וסופי (תוקנה תנועת העכבר) */
+/* Vibe Coding CSS: עיצוב נקי וסופי - תיקון מעבר Scary Smooth */
 body {
     background-color: #f4f7f6;
     font-family: 'Montserrat', sans-serif; 
@@ -79,7 +79,10 @@ h1 {
     cursor: pointer;
     border-radius: 50%; 
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
+    
+    /* קריטי: מעבר חלק על כל המאפיינים למשך 0.5 שניות */
     transition: all 0.5s ease-in-out; 
+    
     background-color: #fff; 
     display: flex;
     align-items: center;
@@ -93,12 +96,19 @@ h1 {
 /* מצב FULL SCREEN אימה - תיקון נקודת מרכז */
 .project-card.fullscreen-video {
     position: fixed !important; 
+    
+    /* ממרכז את העיגול במרכז המסך (50%/50%) */
     top: 50% !important;
     left: 50% !important; 
     transform: translate(-50%, -50%) !important; 
+    
+    /* קריטי: המעבר עצמו */
     width: 100vw !important; 
     height: 100vh !important; 
+    
+    /* מוריד את הרדיוס לאפס (הופך לעיגול למרובע) */
     border-radius: 0 !important; 
+    
     z-index: 1000 !important;
     overflow: hidden !important;
     background-color: transparent !important; 
@@ -171,20 +181,17 @@ h1 {
     display: none !important;
 }
 
-/* תמונה עוקבת אחרי עכבר - תיקון קריטי למיקום */
+/* תמונה עוקבת אחרי עכבר - תיקון מיקום וגודל */
 .follower {
     position: fixed; 
     pointer-events: none; 
     z-index: 10000; 
-    /* קריטי: מעבר חלק רק על המיקום והגודל, לא על ה-XY */
-    transition: transform 0.1s ease-out, opacity 0.3s ease-in-out; 
+    transition: transform 0.1s ease-out; 
     width: 240px; 
     height: auto;
     opacity: 0; 
     /* קריטי: ממקם את מרכז התמונה על קואורדינטות העכבר שנקבעו ב-JS */
     transform: translate(-50%, -50%); 
-    left: 0;
-    top: 0;
 }
 
 .follower.active {
@@ -221,4 +228,4 @@ h1 {
     cursor: pointer;
     font-size: 1.2em;
     font-weight: 700;
-}
+}ה
