@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const eatingSound = document.getElementById('eatingSound');
     const magicSound = document.getElementById('magicSound'); 
 
-    // NEW: נתיב הבסיס הנדרש עבור GitHub Pages
+    // NEW: נתיב הבסיס הנדרש עבור GitHub Pages (עם סלאש מוביל)
     const BASE_PATH = "/portfolio/"; 
 
     // הגדרת קבצי הוידאו והתמונות
@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const REGULAR_BEAR_IMAGE = 'regular_bear.png'; 
     const SCARY_BEAR_IMAGE = 'scary_bear.png';     
-    const FISH_IMAGE = 'fish.png'; // קובץ הדג לאיסוף
-    const FOLLOWER_DEFAULT_IMAGE = 'follower_image.png'; // תמונת הדב במצב Cute
+    const FISH_IMAGE = 'fish.png'; 
+    const FOLLOWER_DEFAULT_IMAGE = 'follower_image.png'; 
     
     const FULLSCREEN_DELAY_MS = 1500;
     const SCARY_END_HOLD_MS = 3000;
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         for (let i = 0; i < NUMBER_OF_FISH; i++) {
             const fish = document.createElement('img');
-            fish.src = BASE_PATH + FISH_IMAGE; // שימוש ב-BASE_PATH
+            fish.src = BASE_PATH + FISH_IMAGE; // נתיב מלא
             fish.classList.add('collectible-fish');
             fish.style.left = `${Math.random() * (window.innerWidth - 100) + 50}px`;
             fish.style.top = `${Math.random() * (window.innerHeight - 100) + 50}px`;
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // הפעלת מצב ה-Follower (אוניברסלי לכל המצבים)
+    // הפעלת מצב ה-Follower
     function activateFollowerGame(imageSrc) {
         // 1. נקיון
         mainVideo.pause();
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mainCard.style.pointerEvents = 'none';
         
         // 2. הפעלת Follower
-        followerImage.src = BASE_PATH + imageSrc; // שימוש ב-BASE_PATH ובתמונה הנכונה
+        followerImage.src = BASE_PATH + imageSrc; // נתיב מלא
         followerImage.classList.add('active');
         body.classList.add('hide-cursor');
         
