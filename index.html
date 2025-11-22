@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header>
+        <h1>Interactive Portfolio</h1>
+        
+        <div class="mode-toggle">
+            <button id="regularMode" class="active">Regular</button>
+            <button id="scaryMode">Scary</button>
+            <button id="cuteMode">Cute</button>
+        </div>
+    </header>
+
     <main class="portfolio-grid">
         <div class="project-card" id="mainProjectCard">
             <video class="project-video" muted preload="auto" poster="bearimage.png">
@@ -17,8 +27,28 @@
                 <source id="cuteSrc" src="/portfolio/cutemagicvideo.mp4" type="video/mp4">
             </video>
             
+            <div class="project-info">
+                <svg viewBox="0 0 300 300" class="curve-text-svg">
+                    <path id="curve-path" fill="none" d="M 25 150 A 125 125 0 0 0 275 150" />
+                    <text class="curved-text">
+                        <textPath href="#curve-path" startOffset="50%" text-anchor="middle">
+                            Recycled Styrofoam Objects
+                        </textPath>
+                    </text>
+                </svg>
             </div>
+        </div>
     </main>
+
+    <div id="scaryEndScreen" class="scary-end-screen">
+        <button id="resetButton">Restart</button>
+    </div>
+    
+    <img src="follower_image.png" id="followerImage" class="follower" alt="Mouse Follower">
+    
+    <div id="collectibleFishContainer"></div>
+
+    <div id="doneMessage">DONE!</div>
 
     <audio id="scaryRoarSound" preload="auto">
         <source src="/portfolio/scary_roar.mp3" type="audio/mp3">
