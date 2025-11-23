@@ -12,7 +12,7 @@ body {
     justify-content: center;
     min-height: 100vh;
 }
-
+ 
 body.scary-mode {
     overflow: hidden;
 }
